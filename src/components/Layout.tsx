@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -36,6 +37,18 @@ const Layout = ({ children }: LayoutProps) => {
     { name: 'Analytics', icon: <BarChart3 className="w-5 h-5" />, path: '/analytics' },
     { name: 'User Management', icon: <Users className="w-5 h-5" />, path: '/users' },
   ];
+
+  const isActive = (path: string) => {
+    if (path === '/dashboard' && location.pathname === '/dashboard') {
+      return true;
+    }
+    
+    if (path !== '/dashboard' && location.pathname.startsWith(path)) {
+      return true;
+    }
+    
+    return false;
+  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -57,9 +70,13 @@ const Layout = ({ children }: LayoutProps) => {
               <button
                 key={item.name}
                 onClick={() => navigate(item.path)}
-                className="flex items-center w-full px-3 py-2 rounded-md hover:bg-sidebar-accent group transition-colors"
+                className={`flex items-center w-full px-3 py-2 rounded-md transition-colors ${
+                  isActive(item.path)
+                    ? 'bg-sidebar-accent text-sidebar-foreground'
+                    : 'hover:bg-sidebar-accent/50 text-sidebar-foreground/70 hover:text-sidebar-foreground'
+                }`}
               >
-                <span className="text-sidebar-foreground/70 group-hover:text-sidebar-foreground">
+                <span className={isActive(item.path) ? 'text-sidebar-foreground' : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'}>
                   {item.icon}
                 </span>
                 <span className="ml-3">{item.name}</span>

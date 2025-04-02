@@ -11,6 +11,8 @@ import WorkspaceDetail from "./pages/WorkspaceDetail";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
+import UserManagement from "./pages/UserManagement";
+import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +39,16 @@ const App = () => (
             <Route path="/workspace/:workspaceId" element={
               <ProtectedRoute>
                 <WorkspaceDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="/users" element={
+              <ProtectedRoute>
+                <UserManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/analytics" element={
+              <ProtectedRoute>
+                <Analytics />
               </ProtectedRoute>
             } />
             

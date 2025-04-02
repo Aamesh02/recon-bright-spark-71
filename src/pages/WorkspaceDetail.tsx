@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,7 +13,8 @@ import {
   Calendar,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  ArrowLeft
 } from 'lucide-react';
 import { ReconciliationRecord } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
@@ -75,6 +76,7 @@ const WorkspaceDetail = () => {
   const [file1, setFile1] = useState<File | null>(null);
   const [file2, setFile2] = useState<File | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -112,16 +114,47 @@ const WorkspaceDetail = () => {
     // Reset file inputs
     setFile1(null);
     setFile2(null);
+    
+    // Show success toast after "processing"
+    setTimeout(() => {
+      toast({
+        title: "Reconciliation complete",
+        description: "Files have been processed successfully",
+      });
+    }, 2000);
+  };
+
+  const handleDownloadReconciliation = (reconId: string) => {
+    toast({
+      title: "Downloading",
+      description: `Preparing reconciliation report ${reconId}...`,
+    });
+    
+    // Simulate download delay
+    setTimeout(() => {
+      toast({
+        title: "Download complete",
+        description: "Reconciliation report has been downloaded",
+      });
+    }, 1500);
+  };
+  
+  const handleViewExceptions = (reconId: string) => {
+    // In a real app, navigate to the exceptions page with the reconciliation ID
+    toast({
+      title: "Viewing exceptions",
+      description: `Showing exceptions for reconciliation ${reconId}`,
+    });
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'exception':
-        return <span className="status-badge-exception">Exception</span>;
+        return <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded-md text-xs font-medium">Exception</span>;
       case 'complete':
-        return <span className="status-badge-complete">Complete</span>;
+        return <span className="bg-green-100 text-green-800 px-2 py-1 rounded-md text-xs font-medium">Complete</span>;
       case 'pending':
-        return <span className="status-badge-pending">Pending</span>;
+        return <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs font-medium">Pending</span>;
       default:
         return null;
     }
@@ -144,6 +177,14 @@ const WorkspaceDetail = () => {
     <Layout>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
+          <Button 
+            variant="ghost" 
+            className="mr-4" 
+            onClick={() => navigate('/dashboard')}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Dashboard
+          </Button>
           <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mr-4">
             <img src={mockBrand.logo} alt={mockBrand.name} className="w-8 h-8" />
           </div>
@@ -170,7 +211,8 @@ const WorkspaceDetail = () => {
                   Upload files to start a new reconciliation process
                 </CardDescription>
               </div>
-              <Button onClick={handleNewReconciliation}>
+              <Button onClick={handleNewReconciliation} disabled={!file1 || !file2}>
+                <Upload className="h-4 w-4 mr-2" />
                 Start Reconciliation
               </Button>
             </CardHeader>
@@ -182,6 +224,7 @@ const WorkspaceDetail = () => {
                     type="file"
                     accept=".xlsx,.xls,.csv"
                     onChange={(e) => handleFileChange(e, 1)}
+                    className="cursor-pointer"
                   />
                   {file1 && (
                     <div className="text-sm text-muted-foreground truncate max-w-[200px]">
@@ -198,6 +241,7 @@ const WorkspaceDetail = () => {
                     type="file" 
                     accept=".xlsx,.xls,.csv"
                     onChange={(e) => handleFileChange(e, 2)}
+                    className="cursor-pointer"
                   />
                   {file2 && (
                     <div className="text-sm text-muted-foreground truncate max-w-[200px]">
@@ -250,11 +294,22 @@ const WorkspaceDetail = () => {
                           </span>
                         </td>
                         <td className="py-3 text-right space-x-2">
-                          <Button variant="ghost" size="icon">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => handleDownloadReconciliation(recon.id)}
+                            title="Download report"
+                          >
                             <Download className="h-4 w-4" />
                           </Button>
                           {recon.status === 'exception' && (
-                            <Button variant="ghost" size="icon" className="text-amber-600">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-amber-600"
+                              onClick={() => handleViewExceptions(recon.id)}
+                              title="View exceptions"
+                            >
                               <AlertTriangle className="h-4 w-4" />
                             </Button>
                           )}

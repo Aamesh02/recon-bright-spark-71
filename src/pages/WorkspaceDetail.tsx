@@ -14,13 +14,12 @@ import {
   CheckCircle,
   Clock,
   ArrowLeft,
-  FilePdf
+  FileText
 } from 'lucide-react';
 import { ReconciliationRecord, ValidationRule } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
 import ValidationRulesList from '@/components/ValidationRulesList';
 
-// Mock data for reconciliation records
 const mockReconciliations: ReconciliationRecord[] = [
   {
     id: '1',
@@ -64,7 +63,6 @@ const mockReconciliations: ReconciliationRecord[] = [
   }
 ];
 
-// Mock validation rules
 const mockValidationRules: ValidationRule[] = [
   {
     id: '1',
@@ -93,7 +91,6 @@ const mockValidationRules: ValidationRule[] = [
   }
 ];
 
-// Mock brand data
 const mockBrand = {
   name: 'Samsung',
   description: 'Samsung Brand EMI Program',
@@ -444,7 +441,7 @@ const WorkspaceDetail = () => {
                     disabled={!pdfFile}
                     className="w-full"
                   >
-                    <FilePdf className="h-4 w-4 mr-2" />
+                    <FileText className="h-4 w-4 mr-2" />
                     Extract Rules
                   </Button>
                 </div>

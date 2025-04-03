@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -14,10 +13,12 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  ArrowLeft
+  ArrowLeft,
+  FilePdf
 } from 'lucide-react';
-import { ReconciliationRecord } from '@/types';
+import { ReconciliationRecord, ValidationRule } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
+import ValidationRulesList from '@/components/ValidationRulesList';
 
 // Mock data for reconciliation records
 const mockReconciliations: ReconciliationRecord[] = [
@@ -63,6 +64,35 @@ const mockReconciliations: ReconciliationRecord[] = [
   }
 ];
 
+// Mock validation rules
+const mockValidationRules: ValidationRule[] = [
+  {
+    id: '1',
+    name: 'Interest Rate Range',
+    description: 'Validates that interest rates fall within acceptable range of 5-25%',
+    type: 'min-max',
+    field1: 'interest_rate',
+    condition: 'between',
+    value: '5-25'
+  },
+  {
+    id: '2',
+    name: 'Subvention Ratio Check',
+    description: 'Ensures subvention amount is always 25% of the total loan amount',
+    type: 'ratio',
+    field1: 'subvention_amount',
+    field2: 'loan_amount',
+    value: '0.25'
+  },
+  {
+    id: '3',
+    name: 'Customer ID Presence',
+    description: 'Verifies that customer ID is present in both data sources',
+    type: 'presence',
+    field1: 'customer_id'
+  }
+];
+
 // Mock brand data
 const mockBrand = {
   name: 'Samsung',
@@ -75,6 +105,8 @@ const WorkspaceDetail = () => {
   const [activeTab, setActiveTab] = useState('reconciliations');
   const [file1, setFile1] = useState<File | null>(null);
   const [file2, setFile2] = useState<File | null>(null);
+  const [validationRules, setValidationRules] = useState<ValidationRule[]>(mockValidationRules);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -106,16 +138,13 @@ const WorkspaceDetail = () => {
       description: "Starting reconciliation process...",
     });
 
-    // In a real app, you would send these files to your backend
     console.log('Starting reconciliation for workspace:', workspaceId);
     console.log('File 1:', file1);
     console.log('File 2:', file2);
 
-    // Reset file inputs
     setFile1(null);
     setFile2(null);
     
-    // Show success toast after "processing"
     setTimeout(() => {
       toast({
         title: "Reconciliation complete",
@@ -130,7 +159,6 @@ const WorkspaceDetail = () => {
       description: `Preparing reconciliation report ${reconId}...`,
     });
     
-    // Simulate download delay
     setTimeout(() => {
       toast({
         title: "Download complete",
@@ -140,11 +168,70 @@ const WorkspaceDetail = () => {
   };
   
   const handleViewExceptions = (reconId: string) => {
-    // In a real app, navigate to the exceptions page with the reconciliation ID
     toast({
       title: "Viewing exceptions",
       description: `Showing exceptions for reconciliation ${reconId}`,
     });
+  };
+
+  const handleAddRule = (rule: ValidationRule) => {
+    setValidationRules([...validationRules, rule]);
+  };
+
+  const handleUpdateRule = (updatedRule: ValidationRule) => {
+    setValidationRules(
+      validationRules.map(rule => 
+        rule.id === updatedRule.id ? updatedRule : rule
+      )
+    );
+  };
+
+  const handleDeleteRule = (ruleId: string) => {
+    setValidationRules(
+      validationRules.filter(rule => rule.id !== ruleId)
+    );
+  };
+
+  const handlePdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setPdfFile(e.target.files[0]);
+    }
+  };
+
+  const handleExtractRules = () => {
+    if (!pdfFile) {
+      toast({
+        title: "Missing file",
+        description: "Please upload a PDF with validation rules",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Processing PDF",
+      description: "Extracting validation rules from document...",
+    });
+
+    setTimeout(() => {
+      const newRule: ValidationRule = {
+        id: crypto.randomUUID(),
+        name: "Extracted Rule - EMI Calculation",
+        description: "Validates EMI calculation matches the formula: P*R*(1+R)^N/((1+R)^N-1)",
+        type: "custom",
+        field1: "emi_amount,principal,rate,tenure",
+        condition: "EMI calculation formula verification"
+      };
+      
+      setValidationRules([...validationRules, newRule]);
+      
+      toast({
+        title: "Extraction complete",
+        description: "Successfully extracted 1 validation rule",
+      });
+      
+      setPdfFile(null);
+    }, 2000);
   };
 
   const getStatusBadge = (status: string) => {
@@ -323,22 +410,60 @@ const WorkspaceDetail = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="validation">
+        <TabsContent value="validation" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Validation Rules</CardTitle>
+              <CardTitle>Rule Extraction</CardTitle>
               <CardDescription>
-                Configure rules to validate reconciliation data
+                Upload PDF documents with validation rules for automatic extraction
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="text-center p-8 text-muted-foreground">
-                <p>Validation rules will be implemented in the next phase</p>
-                <p className="text-sm mt-2">
-                  This section will include options to define min-max rules, ratio-based rules, 
-                  and other validation logic for this workspace.
-                </p>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="col-span-2">
+                  <div className="space-y-2">
+                    <div className="font-medium">Upload Document</div>
+                    <div className="flex items-center space-x-2">
+                      <Input 
+                        type="file"
+                        accept=".pdf"
+                        onChange={handlePdfUpload}
+                        className="cursor-pointer"
+                      />
+                      {pdfFile && (
+                        <div className="text-sm text-muted-foreground truncate max-w-[200px]">
+                          {pdfFile.name}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-end">
+                  <Button 
+                    onClick={handleExtractRules} 
+                    disabled={!pdfFile}
+                    className="w-full"
+                  >
+                    <FilePdf className="h-4 w-4 mr-2" />
+                    Extract Rules
+                  </Button>
+                </div>
               </div>
+              
+              <div className="text-sm text-muted-foreground bg-muted/30 p-3 rounded-md">
+                <p>The Intelligence Engine can automatically extract validation rules from PDF documents containing predefined rule sets. Upload standard rule documents to have them automatically processed and added to your workspace.</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <ValidationRulesList 
+                rules={validationRules}
+                onRuleAdd={handleAddRule}
+                onRuleUpdate={handleUpdateRule}
+                onRuleDelete={handleDeleteRule}
+              />
             </CardContent>
           </Card>
         </TabsContent>

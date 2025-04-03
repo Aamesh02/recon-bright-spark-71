@@ -51,3 +51,17 @@ export interface ExceptionRecord {
   status: 'open' | 'resolved' | 'in-suspense';
   notes?: string;
 }
+
+export interface ValidationResult {
+  ruleId: string;
+  ruleName: string;
+  recordId: string;
+  passed: boolean;
+  field1?: string;
+  field2?: string;
+  value1?: string | number;
+  value2?: string | number;
+  expectedValue?: string | number;
+  message?: string;
+}
+

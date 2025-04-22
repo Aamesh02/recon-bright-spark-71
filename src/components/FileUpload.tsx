@@ -46,16 +46,16 @@ const FileUpload = ({ label, onFileChange, accept = ".xlsx,.xls,.csv" }: FileUpl
     <div className="space-y-2">
       <div className="font-medium">{label}</div>
       <div
-        className={`border-2 border-dashed rounded-md p-4 transition-colors ${
-          isDraggingOver ? 'border-primary bg-primary/5' : 'border-gray-300'
-        } ${file ? 'border-green-500 bg-green-50' : ''}`}
+        className={`border-2 border-dashed rounded-md p-4 transition-colors backdrop-blur-sm ${
+          isDraggingOver ? 'border-primary bg-primary/10' : 'border-white/20'
+        } ${file ? 'border-success bg-success/10' : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         {file ? (
           <div className="flex items-center justify-center py-4">
-            <CheckCircle2 className="h-6 w-6 text-green-500 mr-2" />
+            <CheckCircle2 className="h-6 w-6 text-success mr-2" />
             <span className="font-medium truncate max-w-[250px]">{file.name}</span>
           </div>
         ) : (

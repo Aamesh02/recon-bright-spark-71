@@ -47,7 +47,7 @@ const exceptionTypeData = [
   { name: 'Other', value: 15 },
 ];
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+const COLORS = ['#1EAEDB', '#10F17E', '#F97316', '#D946EF', '#6366F1'];
 
 const workspaceActivityData = [
   { name: 'Samsung', activity: 78 },
@@ -58,9 +58,9 @@ const workspaceActivityData = [
 ];
 
 const chartConfig = {
-  completed: { label: 'Completed', color: '#4CAF50' },
-  exceptions: { label: 'Exceptions', color: '#FF5722' },
-  activity: { label: 'Activity', color: '#2196F3' },
+  completed: { label: 'Completed', color: '#10F17E' },
+  exceptions: { label: 'Exceptions', color: '#D946EF' },
+  activity: { label: 'Activity', color: '#1EAEDB' },
 };
 
 const Analytics = () => {
@@ -75,7 +75,7 @@ const Analytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
+          <TabsList className="grid w-full grid-cols-3 mb-4 bg-black/30">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="exceptions">Exceptions</TabsTrigger>
             <TabsTrigger value="workspaces">Workspaces</TabsTrigger>
@@ -83,42 +83,42 @@ const Analytics = () => {
 
           <TabsContent value="overview">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card>
+              <Card className="glass-card card-hover">
                 <CardHeader>
                   <CardTitle>Total Reconciliations</CardTitle>
                   <CardDescription>Last 30 days</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-4xl font-bold">293</div>
-                  <p className="text-sm text-muted-foreground mt-2">+12% from last month</p>
+                  <p className="text-sm text-green-400 mt-2">+12% from last month</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card card-hover">
                 <CardHeader>
                   <CardTitle>Exceptions Rate</CardTitle>
                   <CardDescription>Last 30 days</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-4xl font-bold">8.3%</div>
-                  <p className="text-sm text-muted-foreground mt-2">-2.1% from last month</p>
+                  <p className="text-sm text-green-400 mt-2">-2.1% from last month</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card card-hover">
                 <CardHeader>
                   <CardTitle>Average Resolution Time</CardTitle>
                   <CardDescription>Last 30 days</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-4xl font-bold">3.2h</div>
-                  <p className="text-sm text-muted-foreground mt-2">-0.5h from last month</p>
+                  <p className="text-sm text-green-400 mt-2">-0.5h from last month</p>
                 </CardContent>
               </Card>
             </div>
 
             <div className="mt-6">
-              <Card>
+              <Card className="glass-card">
                 <CardHeader>
                   <CardTitle>Monthly Reconciliation Performance</CardTitle>
                   <CardDescription>
@@ -132,13 +132,13 @@ const Analytics = () => {
                         data={reconciliationData} 
                         margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip content={<ChartTooltipContent />} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                        <XAxis dataKey="name" stroke="rgba(255,255,255,0.7)" />
+                        <YAxis stroke="rgba(255,255,255,0.7)" />
+                        <Tooltip content={<ChartTooltipContent />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
                         <Legend />
-                        <Bar dataKey="completed" name="Completed" fill="#4CAF50" />
-                        <Bar dataKey="exceptions" name="Exceptions" fill="#FF5722" />
+                        <Bar dataKey="completed" name="Completed" fill="#10F17E" />
+                        <Bar dataKey="exceptions" name="Exceptions" fill="#D946EF" />
                       </BarChart>
                     </ResponsiveContainer>
                   </ChartContainer>
@@ -149,7 +149,7 @@ const Analytics = () => {
 
           <TabsContent value="exceptions">
             <div className="grid gap-4 md:grid-cols-2">
-              <Card>
+              <Card className="glass-card">
                 <CardHeader>
                   <CardTitle>Exception Types</CardTitle>
                   <CardDescription>
@@ -166,6 +166,7 @@ const Analytics = () => {
                           cy="50%"
                           labelLine={false}
                           outerRadius={80}
+                          stroke="#000"
                           fill="#8884d8"
                           dataKey="value"
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
@@ -174,7 +175,7 @@ const Analytics = () => {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip />
+                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.05)'}} />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -182,7 +183,7 @@ const Analytics = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card">
                 <CardHeader>
                   <CardTitle>Exception Resolution Time</CardTitle>
                   <CardDescription>
@@ -203,12 +204,12 @@ const Analytics = () => {
                         ]}
                         margin={{ top: 20, right: 30, left: 70, bottom: 5 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" />
-                        <YAxis dataKey="name" type="category" />
-                        <Tooltip />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                        <XAxis type="number" stroke="rgba(255,255,255,0.7)" />
+                        <YAxis dataKey="name" type="category" stroke="rgba(255,255,255,0.7)" />
+                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.05)'}} />
                         <Legend />
-                        <Bar dataKey="hours" name="Hours" fill="#8884d8" />
+                        <Bar dataKey="hours" name="Hours" fill="#1EAEDB" />
                       </BarChart>
                     </ResponsiveContainer>
                   </ChartContainer>
@@ -218,7 +219,7 @@ const Analytics = () => {
           </TabsContent>
 
           <TabsContent value="workspaces">
-            <Card>
+            <Card className="glass-card">
               <CardHeader>
                 <CardTitle>Workspace Activity</CardTitle>
                 <CardDescription>
@@ -232,17 +233,19 @@ const Analytics = () => {
                       data={workspaceActivityData}
                       margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip content={<ChartTooltipContent />} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis dataKey="name" stroke="rgba(255,255,255,0.7)" />
+                      <YAxis stroke="rgba(255,255,255,0.7)" />
+                      <Tooltip content={<ChartTooltipContent />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
                       <Legend />
                       <Line
                         type="monotone"
                         dataKey="activity"
                         name="Activity"
-                        stroke="#2196F3"
-                        activeDot={{ r: 8 }}
+                        stroke="#1EAEDB"
+                        strokeWidth={2}
+                        dot={{ r: 6, strokeWidth: 2 }}
+                        activeDot={{ r: 8, stroke: "#1EAEDB", strokeWidth: 2 }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -251,49 +254,21 @@ const Analytics = () => {
             </Card>
 
             <div className="grid gap-4 mt-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Samsung</CardTitle>
-                  <CardDescription>Brand EMI program</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">78</div>
-                  <p className="text-sm text-muted-foreground mt-2">32 exceptions</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Godrej</CardTitle>
-                  <CardDescription>Brand EMI program</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">45</div>
-                  <p className="text-sm text-muted-foreground mt-2">18 exceptions</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>HP</CardTitle>
-                  <CardDescription>Brand EMI program</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">92</div>
-                  <p className="text-sm text-muted-foreground mt-2">15 exceptions</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Vivo</CardTitle>
-                  <CardDescription>Brand EMI program</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">65</div>
-                  <p className="text-sm text-muted-foreground mt-2">24 exceptions</p>
-                </CardContent>
-              </Card>
+              {workspaceActivityData.map(workspace => (
+                <Card key={workspace.name} className="glass-card card-hover">
+                  <CardHeader>
+                    <CardTitle>{workspace.name}</CardTitle>
+                    <CardDescription>Brand EMI program</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-cyan-blue">{workspace.activity}</div>
+                    <p className="text-sm text-muted-foreground mt-2">{Math.round(workspace.activity * 0.4)} exceptions</p>
+                    <div className="mt-2 progress-bar">
+                      <div className="progress-value bg-cyan-blue" style={{width: `${(workspace.activity/100) * 100}%`}}></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </TabsContent>
         </Tabs>

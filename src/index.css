@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -45,42 +47,44 @@
     --sidebar-ring: 210 100% 50%;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+  /* Dark theme as default */
+  body {
+    --background: 225 30% 10%;
+    --foreground: 210 20% 98%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 222.2 84% 10% / 0.8;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 222.2 84% 10%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: 210 100% 50%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 196 100% 49%; /* cyan-blue */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 30 100% 50%; /* amber-yellow */
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
     --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent-foreground: 210 20% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 324 86% 60.8%; /* magenta-pink */
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 217.2 32.6% 17.5%;
+    --border: 217.2 32.6% 17.5% / 0.5;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 210 30% 10%;
+    --ring: 196 100% 49%;
+    
+    --sidebar-background: 225 30% 8%;
     --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary: 196 100% 49%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 25% 15%;
-    --sidebar-accent-foreground: 210 25% 98%;
-    --sidebar-border: 210 25% 15%;
-    --sidebar-ring: 210 100% 60%;
+    --sidebar-accent: 225 30% 15%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 225 30% 15%;
+    --sidebar-ring: 196 100% 49%;
   }
 }
 
@@ -90,13 +94,91 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-dark text-foreground font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-semibold;
+  }
+  
+  h1 {
+    @apply text-3xl;
+  }
+  
+  h2 {
+    @apply text-2xl;
+  }
+  
+  h3 {
+    @apply text-xl;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-sm bg-black/20 border border-white/10 shadow-lg;
+  }
+  
+  .card-hover {
+    @apply transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl;
+  }
+  
+  .sidebar-item {
+    @apply flex items-center w-full px-3 py-2 rounded-md transition-colors;
+  }
+  
+  .sidebar-item.active {
+    @apply bg-sidebar-accent text-sidebar-foreground border-l-4 border-primary;
+  }
+  
+  .sidebar-item:not(.active) {
+    @apply hover:bg-sidebar-accent/50 text-sidebar-foreground/70 hover:text-sidebar-foreground;
+  }
+  
+  .progress-bar {
+    @apply w-full h-2 bg-gray-700 rounded-full overflow-hidden;
+  }
+  
+  .progress-value {
+    @apply h-full rounded-full transition-all duration-300;
+  }
+  
+  .progress-success {
+    @apply bg-success;
+  }
+  
+  .progress-warning {
+    @apply bg-warning;
+  }
+  
+  .progress-alert {
+    @apply bg-alert;
+  }
+  
+  .gradient-btn {
+    @apply bg-gradient-button text-white font-medium px-4 py-2 rounded-md transition-all;
+  }
+  
+  .gradient-btn:hover {
+    @apply animate-btn-glow scale-[1.02];
+  }
+  
+  .kpi-tile {
+    @apply glass-card p-4 rounded-lg flex flex-col items-center justify-center;
+  }
+  
+  .kpi-tile-value {
+    @apply text-2xl font-semibold;
+  }
+  
+  .kpi-tile-label {
+    @apply text-xs text-gray-400;
   }
 }
 
 /* Custom styles for reconciliation platform */
 .file-upload-area {
-  @apply border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary cursor-pointer transition-all;
+  @apply border-2 border-dashed border-gray-300/50 rounded-lg p-8 text-center hover:border-primary cursor-pointer transition-all;
 }
 
 .file-upload-area.active {
@@ -104,13 +186,13 @@
 }
 
 .status-badge-pending {
-  @apply bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs font-medium;
+  @apply bg-blue-900/50 text-blue-200 px-2 py-1 rounded-full text-xs font-medium;
 }
 
 .status-badge-complete {
-  @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium;
+  @apply bg-green-900/50 text-green-200 px-2 py-1 rounded-full text-xs font-medium;
 }
 
 .status-badge-exception {
-  @apply bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium;
+  @apply bg-red-900/50 text-red-200 px-2 py-1 rounded-full text-xs font-medium;
 }

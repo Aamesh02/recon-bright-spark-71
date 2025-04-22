@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { PlusCircle, AlertCircle, CheckCircle2, BarChart, Factory, Percent } from 'lucide-react';
 import { WorkspaceCard } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
+import FileUpload from '@/components/FileUpload';
 
 // Mock data for workspace cards
 const mockWorkspaces: WorkspaceCard[] = [
@@ -72,63 +73,8 @@ const Dashboard = () => {
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [file1, setFile1] = useState<File | null>(null);
   const [file2, setFile2] = useState<File | null>(null);
-  const [isDraggingOver1, setIsDraggingOver1] = useState(false);
-  const [isDraggingOver2, setIsDraggingOver2] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    fileNumber: 1 | 2
-  ) => {
-    if (e.target.files && e.target.files[0]) {
-      if (fileNumber === 1) {
-        setFile1(e.target.files[0]);
-      } else {
-        setFile2(e.target.files[0]);
-      }
-    }
-  };
-
-  const handleDragOver = (
-    e: React.DragEvent<HTMLDivElement>,
-    fileNumber: 1 | 2
-  ) => {
-    e.preventDefault();
-    if (fileNumber === 1) {
-      setIsDraggingOver1(true);
-    } else {
-      setIsDraggingOver2(true);
-    }
-  };
-
-  const handleDragLeave = (
-    e: React.DragEvent<HTMLDivElement>,
-    fileNumber: 1 | 2
-  ) => {
-    e.preventDefault();
-    if (fileNumber === 1) {
-      setIsDraggingOver1(false);
-    } else {
-      setIsDraggingOver2(false);
-    }
-  };
-
-  const handleDrop = (
-    e: React.DragEvent<HTMLDivElement>,
-    fileNumber: 1 | 2
-  ) => {
-    e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      if (fileNumber === 1) {
-        setFile1(e.dataTransfer.files[0]);
-        setIsDraggingOver1(false);
-      } else {
-        setFile2(e.dataTransfer.files[0]);
-        setIsDraggingOver2(false);
-      }
-    }
-  };
 
   const handleCreateWorkspace = () => {
     if (!newWorkspaceName || !file1 || !file2) {
@@ -176,23 +122,36 @@ const Dashboard = () => {
     return Math.round((workspace.matchedRecords / workspace.totalRecords) * 100);
   };
 
+  const getProgressBarColor = (percentage: number) => {
+    if (percentage === 100) return 'progress-success';
+    if (percentage >= 95) return 'progress-warning';
+    return 'progress-alert';
+  };
+
+  // Calculate total stats for KPI tiles
+  const totalGMV = "₹143.8M";
+  const totalWorkspaces = mockWorkspaces.length;
+  const avgMatchPercentage = Math.round(
+    mockWorkspaces.reduce((sum, workspace) => sum + getMatchPercentage(workspace), 0) / mockWorkspaces.length
+  );
+
   return (
     <Layout>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Reconciliation Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Reconciliation Dashboard</h1>
+          <p className="text-muted-foreground">
             Manage and monitor your reconciliation workspaces
           </p>
         </div>
         <Dialog open={isCreatingWorkspace} onOpenChange={setIsCreatingWorkspace}>
           <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
+            <Button className="gradient-btn flex items-center gap-2">
               <PlusCircle className="w-4 h-4" />
               <span>New Workspace</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[500px] glass-card">
             <DialogHeader>
               <DialogTitle>Create new reconciliation workspace</DialogTitle>
               <DialogDescription>
@@ -206,83 +165,33 @@ const Dashboard = () => {
                   id="workspace-name" 
                   value={newWorkspaceName}
                   onChange={(e) => setNewWorkspaceName(e.target.value)}
-                  placeholder="e.g., Samsung Brand EMI Reconciliation" 
+                  placeholder="e.g., Samsung Brand EMI Reconciliation"
+                  className="bg-black/30 border-white/20" 
                 />
               </div>
               
               <div className="space-y-2">
                 <Label>Source 1 File</Label>
-                <div
-                  className={`file-upload-area ${isDraggingOver1 ? 'active' : ''} ${file1 ? 'border-green-500 bg-green-50' : ''}`}
-                  onDragOver={(e) => handleDragOver(e, 1)}
-                  onDragLeave={(e) => handleDragLeave(e, 1)}
-                  onDrop={(e) => handleDrop(e, 1)}
-                >
-                  {file1 ? (
-                    <div className="flex items-center justify-center">
-                      <CheckCircle2 className="h-6 w-6 text-green-500 mr-2" />
-                      <span className="font-medium">{file1.name}</span>
-                    </div>
-                  ) : (
-                    <>
-                      <input
-                        type="file"
-                        id="file-upload-1"
-                        className="hidden"
-                        accept=".xlsx,.xls,.csv"
-                        onChange={(e) => handleFileChange(e, 1)}
-                      />
-                      <label htmlFor="file-upload-1" className="cursor-pointer">
-                        <div className="flex flex-col items-center">
-                          <PlusCircle className="h-8 w-8 text-gray-400 mb-2" />
-                          <p className="text-sm font-medium">Click to upload or drag & drop</p>
-                          <p className="text-xs text-gray-500">Excel or CSV file</p>
-                        </div>
-                      </label>
-                    </>
-                  )}
-                </div>
+                <FileUpload
+                  label="Source 1"
+                  onFileChange={(file) => setFile1(file)}
+                />
               </div>
               
               <div className="space-y-2">
                 <Label>Source 2 File</Label>
-                <div
-                  className={`file-upload-area ${isDraggingOver2 ? 'active' : ''} ${file2 ? 'border-green-500 bg-green-50' : ''}`}
-                  onDragOver={(e) => handleDragOver(e, 2)}
-                  onDragLeave={(e) => handleDragLeave(e, 2)}
-                  onDrop={(e) => handleDrop(e, 2)}
-                >
-                  {file2 ? (
-                    <div className="flex items-center justify-center">
-                      <CheckCircle2 className="h-6 w-6 text-green-500 mr-2" />
-                      <span className="font-medium">{file2.name}</span>
-                    </div>
-                  ) : (
-                    <>
-                      <input
-                        type="file"
-                        id="file-upload-2"
-                        className="hidden"
-                        accept=".xlsx,.xls,.csv"
-                        onChange={(e) => handleFileChange(e, 2)}
-                      />
-                      <label htmlFor="file-upload-2" className="cursor-pointer">
-                        <div className="flex flex-col items-center">
-                          <PlusCircle className="h-8 w-8 text-gray-400 mb-2" />
-                          <p className="text-sm font-medium">Click to upload or drag & drop</p>
-                          <p className="text-xs text-gray-500">Excel or CSV file</p>
-                        </div>
-                      </label>
-                    </>
-                  )}
-                </div>
+                <FileUpload
+                  label="Source 2"
+                  onFileChange={(file) => setFile2(file)}
+                />
               </div>
             </div>
             <div className="flex justify-end gap-4">
-              <Button variant="outline" onClick={() => setIsCreatingWorkspace(false)}>
+              <Button variant="outline" onClick={() => setIsCreatingWorkspace(false)}
+                className="hover:bg-white/10 border-white/20">
                 Cancel
               </Button>
-              <Button onClick={handleCreateWorkspace}>
+              <Button onClick={handleCreateWorkspace} className="gradient-btn">
                 Create Workspace
               </Button>
             </div>
@@ -290,27 +199,50 @@ const Dashboard = () => {
         </Dialog>
       </div>
 
+      {/* KPI Tiles */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="kpi-tile">
+          <BarChart className="h-6 w-6 text-warning mb-2" />
+          <div className="kpi-tile-value text-warning">{totalGMV}</div>
+          <div className="kpi-tile-label">YTD GMV</div>
+        </div>
+        <div className="kpi-tile">
+          <Factory className="h-6 w-6 text-cyan-blue mb-2" />
+          <div className="kpi-tile-value text-cyan-blue">{totalWorkspaces}</div>
+          <div className="kpi-tile-label">Workspaces</div>
+        </div>
+        <div className="kpi-tile">
+          <Percent className="h-6 w-6 mb-2" 
+            style={{ color: avgMatchPercentage === 100 ? '#10F17E' : avgMatchPercentage >= 95 ? '#F97316' : '#D946EF' }} 
+          />
+          <div className="kpi-tile-value" 
+            style={{ color: avgMatchPercentage === 100 ? '#10F17E' : avgMatchPercentage >= 95 ? '#F97316' : '#D946EF' }}
+          >{avgMatchPercentage}%</div>
+          <div className="kpi-tile-label">Avg Match %</div>
+        </div>
+      </div>
+
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {mockWorkspaces.map((workspace) => (
           <Card 
             key={workspace.id} 
-            className="cursor-pointer hover:border-primary transition-colors"
+            className="glass-card card-hover cursor-pointer"
             onClick={() => handleWorkspaceClick(workspace.id)}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                <div className="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center overflow-hidden">
                   <img src={workspace.brand.logo} alt={workspace.brand.name} className="w-6 h-6" />
                 </div>
                 <CardTitle className="text-lg">{workspace.brand.name}</CardTitle>
               </div>
               {workspace.pendingExceptions > 0 ? (
-                <div className="flex items-center text-amber-600">
+                <div className="flex items-center text-alert">
                   <AlertCircle className="h-4 w-4 mr-1" />
                   <span className="text-sm font-medium">{workspace.pendingExceptions}</span>
                 </div>
               ) : (
-                <div className="flex items-center text-green-600">
+                <div className="flex items-center text-success">
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
               )}
@@ -321,21 +253,26 @@ const Dashboard = () => {
                 {workspace.description}
               </p>
             </CardContent>
-            <CardFooter className="flex justify-between text-xs text-muted-foreground">
-              <div>Last updated: {workspace.lastUpdated}</div>
-              <div className="font-medium">
-                <span className={workspace.pendingExceptions > 0 ? "text-amber-600" : "text-green-600"}>
-                  {getMatchPercentage(workspace)}%
-                </span> matched
+            <CardFooter className="flex flex-col space-y-2">
+              <div className="flex justify-between w-full text-xs text-muted-foreground">
+                <div>Last updated: {workspace.lastUpdated}</div>
+                <div className="font-medium">
+                  <span 
+                    className={getMatchPercentage(workspace) === 100 ? "text-success" : 
+                      getMatchPercentage(workspace) >= 95 ? "text-warning" : "text-alert"}
+                  >
+                    {getMatchPercentage(workspace)}%
+                  </span> matched
+                </div>
+              </div>
+              {/* Progress bar */}
+              <div className="progress-bar">
+                <div 
+                  className={`progress-value ${getProgressBarColor(getMatchPercentage(workspace))}`}
+                  style={{width: `${getMatchPercentage(workspace)}%`}}
+                ></div>
               </div>
             </CardFooter>
-            {/* Progress bar for matched records */}
-            <div className="h-1 w-full bg-gray-200">
-              <div 
-                className={`h-full ${workspace.pendingExceptions > 0 ? "bg-amber-500" : "bg-green-500"}`}
-                style={{width: `${getMatchPercentage(workspace)}%`}}
-              ></div>
-            </div>
           </Card>
         ))}
       </div>

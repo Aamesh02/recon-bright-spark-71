@@ -51,12 +51,12 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-gradient-dark overflow-hidden">
       {/* Sidebar */}
-      <div className="hidden md:flex flex-col w-64 bg-sidebar text-sidebar-foreground">
+      <div className="hidden md:flex flex-col w-64 bg-sidebar drop-shadow-xl">
         <div className="p-4">
-          <div className="flex items-center mb-6">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-2xl">
+          <div className="flex items-center mb-8">
+            <div className="w-10 h-10 rounded-full bg-gradient-button flex items-center justify-center text-white font-bold text-2xl">
               R
             </div>
             <div className="ml-3">
@@ -70,28 +70,24 @@ const Layout = ({ children }: LayoutProps) => {
               <button
                 key={item.name}
                 onClick={() => navigate(item.path)}
-                className={`flex items-center w-full px-3 py-2 rounded-md transition-colors ${
-                  isActive(item.path)
-                    ? 'bg-sidebar-accent text-sidebar-foreground'
-                    : 'hover:bg-sidebar-accent/50 text-sidebar-foreground/70 hover:text-sidebar-foreground'
-                }`}
+                className={`sidebar-item ${isActive(item.path) ? 'active' : ''}`}
               >
-                <span className={isActive(item.path) ? 'text-sidebar-foreground' : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'}>
+                <span className={isActive(item.path) ? 'text-cyan-blue mr-3' : 'text-sidebar-foreground/70 mr-3'}>
                   {item.icon}
                 </span>
-                <span className="ml-3">{item.name}</span>
+                <span>{item.name}</span>
               </button>
             ))}
           </nav>
         </div>
 
-        <div className="mt-auto p-4 border-t border-sidebar-border">
+        <div className="mt-auto p-4 border-t border-sidebar-border/40">
           <button 
             onClick={handleLogout}
-            className="flex items-center w-full px-3 py-2 rounded-md hover:bg-sidebar-accent group transition-colors"
+            className="sidebar-item group"
           >
-            <LogOut className="w-5 h-5 text-sidebar-foreground/70 group-hover:text-sidebar-foreground" />
-            <span className="ml-3">Logout</span>
+            <LogOut className="w-5 h-5 text-sidebar-foreground/70 group-hover:text-sidebar-foreground mr-3" />
+            <span>Logout</span>
           </button>
         </div>
       </div>
@@ -99,32 +95,32 @@ const Layout = ({ children }: LayoutProps) => {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top navigation */}
-        <header className="bg-white shadow z-10">
+        <header className="bg-black/30 backdrop-blur-sm shadow-md z-10">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input 
                   placeholder="Search reconciliation tasks..." 
-                  className="w-[300px] pl-9"
+                  className="w-[300px] pl-9 bg-black/30 border-white/10"
                 />
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              <Button className="flex items-center gap-2 bg-primary text-white">
-                <PlusCircle className="w-4 h-4" />
+              <Button className="gradient-btn">
+                <PlusCircle className="w-4 h-4 mr-2" />
                 <span>Create</span>
               </Button>
               
               <div className="flex items-center">
                 <div className="mr-3 text-right">
                   <div className="font-medium">{user?.name}</div>
-                  <div className="text-xs text-gray-500">{user?.email}</div>
+                  <div className="text-xs text-gray-400">{user?.email}</div>
                 </div>
                 <Avatar>
                   <AvatarImage src={user?.avatar} alt={user?.name} />
-                  <AvatarFallback>{user?.name ? user.name.charAt(0) : 'U'}</AvatarFallback>
+                  <AvatarFallback className="bg-gradient-button">{user?.name ? user.name.charAt(0) : 'U'}</AvatarFallback>
                 </Avatar>
               </div>
             </div>
@@ -132,7 +128,7 @@ const Layout = ({ children }: LayoutProps) => {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-background p-6">
+        <main className="flex-1 overflow-y-auto bg-transparent p-6">
           {children}
         </main>
       </div>

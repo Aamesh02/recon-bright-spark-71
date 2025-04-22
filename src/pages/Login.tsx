@@ -33,10 +33,10 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-background items-center justify-center p-4">
+    <div className="flex min-h-screen bg-gradient-dark items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto w-12 h-12 bg-gradient-button rounded-full flex items-center justify-center mb-4">
             <BarChart3 className="h-6 w-6 text-primary-foreground" />
           </div>
           <h1 className="text-3xl font-bold">Reconciliation Platform</h1>
@@ -45,7 +45,7 @@ const Login = () => {
           </p>
         </div>
         
-        <Card>
+        <Card className="glass-card">
           <CardHeader>
             <CardTitle className="text-xl">Sign In</CardTitle>
             <CardDescription>
@@ -62,6 +62,7 @@ const Login = () => {
                   placeholder="name@company.com" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="bg-black/30 border-white/20"
                   required
                 />
               </div>
@@ -69,7 +70,7 @@ const Login = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
-                  <a href="#" className="text-xs text-primary hover:underline">
+                  <a href="#" className="text-xs text-cyan-blue hover:underline">
                     Forgot password?
                   </a>
                 </div>
@@ -79,6 +80,7 @@ const Login = () => {
                   placeholder="••••••••" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="bg-black/30 border-white/20"
                   required
                 />
               </div>
@@ -96,7 +98,7 @@ const Login = () => {
               
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="gradient-btn w-full" 
                 disabled={isLoading}
               >
                 {isLoading ? "Signing in..." : "Sign in"}
@@ -105,7 +107,7 @@ const Login = () => {
             
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-white/10"></div>
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-card px-2 text-muted-foreground">
@@ -120,6 +122,7 @@ const Login = () => {
                 type="button"
                 disabled={isLoading}
                 onClick={handleGoogleLogin}
+                className="hover:bg-white/10 border-white/20"
               >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                   <path
@@ -146,6 +149,7 @@ const Login = () => {
                 type="button"
                 disabled={isLoading}
                 onClick={handleMicrosoftLogin}
+                className="hover:bg-white/10 border-white/20"
               >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                   <path
@@ -160,9 +164,9 @@ const Login = () => {
           <CardFooter className="flex justify-center">
             <p className="text-xs text-center text-muted-foreground">
               By signing in, you agree to our
-              <a href="#" className="underline mx-1">Terms of Service</a>
+              <a href="#" className="text-cyan-blue underline mx-1">Terms of Service</a>
               and
-              <a href="#" className="underline mx-1">Privacy Policy</a>
+              <a href="#" className="text-cyan-blue underline mx-1">Privacy Policy</a>
             </p>
           </CardFooter>
         </Card>

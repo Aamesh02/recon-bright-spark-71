@@ -1,4 +1,3 @@
-
 import { type Config } from "tailwindcss";
 
 export default {
@@ -105,8 +104,8 @@ export default {
         "btn-glow": "btn-glow 2s infinite",
       },
       backgroundImage: {
-        "gradient-dark": "linear-gradient(180deg, #221F26 0%, #1A2035 100%)",
-        "gradient-button": "linear-gradient(90deg, #F59E0B 0%, #38BDF8 100%)",
+        "gradient-dark": "linear-gradient(180deg, #221F26 0%, #1A2035 50%, #121827 100%)", // Softened multi-stop gradient
+        "gradient-button": "linear-gradient(90deg, #7E69AB 0%, #9b87f5 100%)", // Softer purple gradient
       },
     },
   },

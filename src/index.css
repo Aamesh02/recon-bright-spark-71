@@ -115,11 +115,15 @@
   }
   
   .gradient-btn {
-    @apply bg-gradient-button text-white font-medium px-4 py-2 rounded-md transition-all;
+    @apply bg-gradient-button text-white font-medium px-4 py-2 rounded-md transition-all shadow-md hover:shadow-lg;
+    background-size: 200% auto;
+    background-position: right center;
+    transition: background-position 0.3s ease;
   }
   
   .gradient-btn:hover {
-    @apply animate-btn-glow scale-[1.02];
+    background-position: left center;
+    transform: scale(1.02);
   }
   
   .kpi-tile {

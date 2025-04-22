@@ -63,10 +63,10 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        success: "#10F17E", // neon green
-        warning: "#F97316", // amber-yellow
-        alert: "#D946EF", // magenta pink
-        "cyan-blue": "#1EAEDB", // neon cyan-blue
+        success: "#10B981", // Soft emerald green
+        warning: "#F59E0B", // Soft amber
+        alert: "#EC4899", // Soft pink
+        "cyan-blue": "#38BDF8", // Soft cyan-blue
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
@@ -106,7 +106,7 @@ export default {
       },
       backgroundImage: {
         "gradient-dark": "linear-gradient(180deg, #221F26 0%, #1A2035 100%)",
-        "gradient-button": "linear-gradient(90deg, #F97316 0%, #1EAEDB 100%)",
+        "gradient-button": "linear-gradient(90deg, #F59E0B 0%, #38BDF8 100%)",
       },
     },
   },

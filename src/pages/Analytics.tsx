@@ -270,7 +270,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <div className="grid gap-4 mt-12 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 mt-16 md:grid-cols-2 lg:grid-cols-4">
               {workspaceActivityData.map(workspace => (
                 <Card key={workspace.name} className="glass-card card-hover">
                   <CardHeader>

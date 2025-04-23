@@ -5,12 +5,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  LayoutDashboard, 
-  Settings, 
-  FileText, 
-  BarChart3, 
-  Users, 
+import {
+  LayoutDashboard,
+  Settings,
+  FileText,
+  BarChart3,
+  Users,
   Search,
   LogOut,
   PlusCircle
@@ -19,6 +19,9 @@ import {
 interface LayoutProps {
   children: React.ReactNode;
 }
+
+// Bounce animation for the "R" logo
+const bounceClass = `hover:animate-bounce transition-transform`;
 
 const Layout = ({ children }: LayoutProps) => {
   const { user, logout } = useAuth();
@@ -51,39 +54,45 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="flex h-screen bg-gradient-dark overflow-hidden">
       {/* Sidebar */}
-      <div className="hidden md:flex flex-col w-64 bg-sidebar drop-shadow-xl">
+      <div
+        className="
+          hidden md:flex flex-col w-64
+          bg-[linear-gradient(140deg,_#7E69AB_0%,_#9b87f5_70%,_#7E69AB_100%)]
+          drop-shadow-xl
+        "
+        style={{
+          background: 'linear-gradient(140deg, #7E69AB 0%, #9b87f5 80%, #7E69AB 100%)'
+        }}
+      >
         <div className="p-4">
           <div className="flex flex-col items-center mb-8">
-            {/* Logo box with enhanced gradient overlay */}
-            <div 
-              className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl overflow-hidden shadow-lg" 
-              style={{ 
-                background: 'linear-gradient(135deg, #9b87f5 10%, #7E69AB 90%)',
-                boxShadow: '0 0 15px rgba(155, 135, 245, 0.5)'
+            {/* Only the "R" logo, vibrant gradient, bouncy on hover, centered */}
+            <div
+              className={`relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl shadow-lg overflow-hidden cursor-pointer ${bounceClass}`}
+              style={{
+                background: 'linear-gradient(135deg, #a389fd 0%, #7E69AB 100%)',
+                boxShadow: '0 0 15px 4px #a389fd33'
               }}
+              tabIndex={0}
+              aria-label="Recon Logo"
             >
-              <img
-                src="/lovable-uploads/495205a4-3da1-453f-ba31-cc10c397df96.png"
-                alt="Recon Platform Logo"
-                className="w-11 h-11 object-contain z-10"
-                draggable={false}
-                style={{ userSelect: 'none' }}
-              />
-              {/* More prominent gradient overlay */}
-              <div
-                className="absolute inset-0 pointer-events-none z-20"
+              <span
+                className="text-4xl font-black select-none"
                 style={{
-                  background: "linear-gradient(120deg, rgba(255,255,255,0.3) 10%, rgba(38,180,255,0.2) 50%, rgba(245,158,11,0.2) 90%)",
-                  mixBlendMode: 'overlay'
+                  background: 'linear-gradient(90deg, #fff, #ffe29f, #9b87f5, #f97316 95%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontFamily: 'Inter, sans-serif'
                 }}
-              />
+              >
+                R
+              </span>
             </div>
             <div className="text-center">
               <h1 className="font-semibold text-lg leading-6 text-foreground tracking-tight">Recon Platform</h1>
               <p className="text-xs text-sidebar-foreground/70">{user?.organization}</p>
             </div>
           </div>
-          {/* Increased spacing here for cleaner menu separation */}
           <div className="mb-10"></div>
           <nav className="space-y-1">
             {navItems.map((item) => (
@@ -100,9 +109,8 @@ const Layout = ({ children }: LayoutProps) => {
             ))}
           </nav>
         </div>
-
         <div className="mt-auto p-4 border-t border-sidebar-border/40">
-          <button 
+          <button
             onClick={handleLogout}
             className="sidebar-item group"
           >
@@ -120,19 +128,17 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="flex items-center">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search reconciliation tasks..." 
+                <Input
+                  placeholder="Search reconciliation tasks..."
                   className="w-[300px] pl-9 bg-black/30 border-white/10"
                 />
               </div>
             </div>
-            
             <div className="flex items-center space-x-4">
               <Button className="gradient-btn">
                 <PlusCircle className="w-4 h-4 mr-2" />
                 <span>Create</span>
               </Button>
-              
               <div className="flex items-center">
                 <div className="mr-3 text-right">
                   <div className="font-medium">{user?.name}</div>
@@ -146,7 +152,6 @@ const Layout = ({ children }: LayoutProps) => {
             </div>
           </div>
         </header>
-
         {/* Page content */}
         <main className="flex-1 overflow-y-auto bg-transparent p-6">
           {children}

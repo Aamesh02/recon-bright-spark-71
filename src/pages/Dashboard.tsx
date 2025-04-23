@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -135,6 +134,12 @@ const Dashboard = () => {
     mockWorkspaces.reduce((sum, workspace) => sum + getMatchPercentage(workspace), 0) / mockWorkspaces.length
   );
 
+    // Helper function to get dynamic logo URL from Clearbit (fallback to placeholder)
+    const getBrandLogoUrl = (brandName: string) => {
+      // Use Clearbit Logo API for demonstration, fallback to placeholder.svg if fetch fails
+      return `https://logo.clearbit.com/${encodeURIComponent(brandName.replace(/\s+/g, '') + ".com")}`;
+    };
+
   return (
     <Layout>
       <div className="flex justify-between items-center mb-8">
@@ -151,7 +156,14 @@ const Dashboard = () => {
               <span>New Workspace</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] glass-card">
+          <DialogContent
+            className="max-w-[410px] rounded-2xl glass-card border border-white/20" // less width, more rounding
+            style={{
+              minWidth: 0,
+              boxShadow: "0 8px 32px 0 rgba(80,40,192,0.26), 0 1.5px 7.5px 0 #7e69ab22",
+              background: "rgba(23, 22, 39, 0.96)"
+            }}
+          >
             <DialogHeader>
               <DialogTitle>Create new reconciliation workspace</DialogTitle>
               <DialogDescription>
@@ -161,15 +173,15 @@ const Dashboard = () => {
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="workspace-name">Workspace Name</Label>
-                <Input 
-                  id="workspace-name" 
+                <Input
+                  id="workspace-name"
                   value={newWorkspaceName}
                   onChange={(e) => setNewWorkspaceName(e.target.value)}
                   placeholder="e.g., Samsung Brand EMI Reconciliation"
-                  className="bg-black/30 border-white/20" 
+                  className="bg-black/30 border-white/20"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label>Source 1 File</Label>
                 <FileUpload
@@ -177,7 +189,7 @@ const Dashboard = () => {
                   onFileChange={(file) => setFile1(file)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label>Source 2 File</Label>
                 <FileUpload
@@ -224,8 +236,8 @@ const Dashboard = () => {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {mockWorkspaces.map((workspace) => (
-          <Card 
-            key={workspace.id} 
+          <Card
+            key={workspace.id}
             className="glass-card card-hover cursor-pointer"
             onClick={() => handleWorkspaceClick(workspace.id)}
           >

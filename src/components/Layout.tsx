@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -59,12 +60,12 @@ const Layout = ({ children }: LayoutProps) => {
       >
         <div className="p-4">
           <div className="flex flex-col items-center mb-8">
-            {/* Logo */}
+            {/* Logo - more subtle and elegant */}
             <div
-              className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl shadow-lg overflow-hidden cursor-pointer"
+              className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl shadow-sm overflow-hidden cursor-pointer"
               style={{
-                background: 'linear-gradient(135deg, #7E69AB 0%, #9b87f5 100%)',
-                boxShadow: '0 0 15px 4px rgba(126, 105, 171, 0.3)'
+                background: 'linear-gradient(135deg, #7E69AB 0%, #8a78c5 100%)',
+                boxShadow: '0 0 10px 2px rgba(126, 105, 171, 0.25)'
               }}
               tabIndex={0}
               aria-label="Recon Logo"
@@ -72,7 +73,7 @@ const Layout = ({ children }: LayoutProps) => {
               <span
                 className="text-4xl font-black select-none"
                 style={{
-                  background: 'linear-gradient(90deg, #fff, #ffe29f, #9b87f5, #f97316 95%)',
+                  background: 'linear-gradient(90deg, #fff, #f0eaff)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   fontFamily: 'Inter, sans-serif'

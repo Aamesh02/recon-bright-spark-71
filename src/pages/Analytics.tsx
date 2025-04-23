@@ -47,7 +47,8 @@ const exceptionTypeData = [
   { name: 'Other', value: 15 },
 ];
 
-const COLORS = ['#1EAEDB', '#10F17E', '#F97316', '#D946EF', '#6366F1'];
+// More refined color palette for charts
+const COLORS = ['#38BDF8', '#10B981', '#F97316', '#C084FC', '#6366F1'];
 
 const workspaceActivityData = [
   { name: 'Samsung', activity: 78 },
@@ -58,9 +59,9 @@ const workspaceActivityData = [
 ];
 
 const chartConfig = {
-  completed: { label: 'Completed', color: '#10F17E' },
-  exceptions: { label: 'Exceptions', color: '#D946EF' },
-  activity: { label: 'Activity', color: '#1EAEDB' },
+  completed: { label: 'Completed', color: '#10B981' }, // More refined green
+  exceptions: { label: 'Exceptions', color: '#C084FC' }, // More refined purple
+  activity: { label: 'Activity', color: '#38BDF8' }, // More refined blue
 };
 
 const Analytics = () => {
@@ -132,13 +133,27 @@ const Analytics = () => {
                         data={reconciliationData} 
                         margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
                         <XAxis dataKey="name" stroke="rgba(255,255,255,0.7)" />
                         <YAxis stroke="rgba(255,255,255,0.7)" />
-                        <Tooltip content={<ChartTooltipContent />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
-                        <Legend />
-                        <Bar dataKey="completed" name="Completed" fill="#10F17E" />
-                        <Bar dataKey="exceptions" name="Exceptions" fill="#D946EF" />
+                        <Tooltip content={<ChartTooltipContent />} cursor={{fill: 'rgba(255,255,255,0.03)'}} />
+                        <Legend wrapperStyle={{paddingTop: 10}} />
+                        <Bar 
+                          dataKey="completed" 
+                          name="Completed" 
+                          fill="#10B981" 
+                          radius={[4, 4, 0, 0]} 
+                          barSize={30} 
+                          animationDuration={800}
+                        />
+                        <Bar 
+                          dataKey="exceptions" 
+                          name="Exceptions" 
+                          fill="#C084FC" 
+                          radius={[4, 4, 0, 0]} 
+                          barSize={30} 
+                          animationDuration={800}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </ChartContainer>
@@ -166,16 +181,18 @@ const Analytics = () => {
                           cy="50%"
                           labelLine={false}
                           outerRadius={80}
-                          stroke="#000"
+                          stroke="#111111"
+                          strokeWidth={1}
                           fill="#8884d8"
                           dataKey="value"
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          animationDuration={1000}
                         >
                           {exceptionTypeData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.05)'}} />
+                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.03)'}} />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -204,12 +221,19 @@ const Analytics = () => {
                         ]}
                         margin={{ top: 20, right: 30, left: 70, bottom: 5 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
                         <XAxis type="number" stroke="rgba(255,255,255,0.7)" />
                         <YAxis dataKey="name" type="category" stroke="rgba(255,255,255,0.7)" />
-                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.05)'}} />
+                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.03)'}} />
                         <Legend />
-                        <Bar dataKey="hours" name="Hours" fill="#1EAEDB" />
+                        <Bar 
+                          dataKey="hours" 
+                          name="Hours" 
+                          fill="#38BDF8" 
+                          radius={[0, 4, 4, 0]}
+                          barSize={20}
+                          animationDuration={800}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </ChartContainer>
@@ -233,19 +257,20 @@ const Analytics = () => {
                       data={workspaceActivityData}
                       margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
                       <XAxis dataKey="name" stroke="rgba(255,255,255,0.7)" />
                       <YAxis stroke="rgba(255,255,255,0.7)" />
-                      <Tooltip content={<ChartTooltipContent />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
+                      <Tooltip content={<ChartTooltipContent />} cursor={{fill: 'rgba(255,255,255,0.03)'}} />
                       <Legend />
                       <Line
                         type="monotone"
                         dataKey="activity"
                         name="Activity"
-                        stroke="#1EAEDB"
+                        stroke="#38BDF8"
                         strokeWidth={2}
-                        dot={{ r: 6, strokeWidth: 2 }}
-                        activeDot={{ r: 8, stroke: "#1EAEDB", strokeWidth: 2 }}
+                        dot={{ r: 6, strokeWidth: 2, fill: "#0c1e35" }}
+                        activeDot={{ r: 8, stroke: "#38BDF8", strokeWidth: 2 }}
+                        animationDuration={1000}
                       />
                     </LineChart>
                   </ResponsiveContainer>

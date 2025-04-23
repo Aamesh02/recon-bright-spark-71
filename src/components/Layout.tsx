@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -51,36 +50,15 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="flex h-screen bg-gradient-dark overflow-hidden">
       {/* Sidebar */}
-      <div
-        className="
-          hidden md:flex flex-col w-64
-          bg-[#221F26]
-          drop-shadow-xl
-        "
-      >
+      <div className="hidden md:flex flex-col w-64 bg-[#221F26] drop-shadow-xl">
         <div className="p-4">
           <div className="flex flex-col items-center mb-8">
-            {/* Logo - more subtle and elegant */}
-            <div
-              className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl shadow-sm overflow-hidden cursor-pointer"
-              style={{
-                background: 'linear-gradient(135deg, #7E69AB 0%, #8a78c5 100%)',
-                boxShadow: '0 0 10px 2px rgba(126, 105, 171, 0.25)'
-              }}
-              tabIndex={0}
-              aria-label="Recon Logo"
-            >
-              <span
-                className="text-4xl font-black select-none"
-                style={{
-                  background: 'linear-gradient(90deg, #fff, #f0eaff)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  fontFamily: 'Inter, sans-serif'
-                }}
-              >
-                R
-              </span>
+            <div className="w-14 h-14 flex items-center justify-center mb-2">
+              <img 
+                src="/lovable-uploads/015c83e1-bfd4-4a01-94a0-b408716118ce.png" 
+                alt="Recon Logo" 
+                className="w-12 h-12"
+              />
             </div>
             <div className="text-center">
               <h1 className="font-semibold text-lg leading-6 text-foreground tracking-tight">Recon Platform</h1>

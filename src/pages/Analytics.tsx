@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Layout from '@/components/Layout';
 import { 
@@ -76,7 +75,7 @@ const Analytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4 bg-black/30">
+          <TabsList className="grid w-full grid-cols-3 mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="exceptions">Exceptions</TabsTrigger>
             <TabsTrigger value="workspaces">Workspaces</TabsTrigger>
@@ -118,8 +117,8 @@ const Analytics = () => {
               </Card>
             </div>
 
-            <div className="mt-6">
-              <Card className="glass-card">
+            <div className="mt-8">
+              <Card className="border border-white/10">
                 <CardHeader>
                   <CardTitle>Monthly Reconciliation Performance</CardTitle>
                   <CardDescription>
@@ -136,7 +135,7 @@ const Analytics = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
                         <XAxis dataKey="name" stroke="rgba(255,255,255,0.7)" />
                         <YAxis stroke="rgba(255,255,255,0.7)" />
-                        <Tooltip content={<ChartTooltipContent />} cursor={{fill: 'rgba(255,255,255,0.03)'}} />
+                        <Tooltip content={<ChartTooltipContent />} />
                         <Legend wrapperStyle={{paddingTop: 10}} />
                         <Bar 
                           dataKey="completed" 
@@ -144,7 +143,6 @@ const Analytics = () => {
                           fill="#10B981" 
                           radius={[4, 4, 0, 0]} 
                           barSize={30} 
-                          animationDuration={800}
                         />
                         <Bar 
                           dataKey="exceptions" 
@@ -152,7 +150,6 @@ const Analytics = () => {
                           fill="#C084FC" 
                           radius={[4, 4, 0, 0]} 
                           barSize={30} 
-                          animationDuration={800}
                         />
                       </BarChart>
                     </ResponsiveContainer>
@@ -186,13 +183,12 @@ const Analytics = () => {
                           fill="#8884d8"
                           dataKey="value"
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                          animationDuration={1000}
                         >
                           {exceptionTypeData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.03)'}} />
+                        <Tooltip />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -224,7 +220,7 @@ const Analytics = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
                         <XAxis type="number" stroke="rgba(255,255,255,0.7)" />
                         <YAxis dataKey="name" type="category" stroke="rgba(255,255,255,0.7)" />
-                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.03)'}} />
+                        <Tooltip />
                         <Legend />
                         <Bar 
                           dataKey="hours" 
@@ -232,7 +228,6 @@ const Analytics = () => {
                           fill="#38BDF8" 
                           radius={[0, 4, 4, 0]}
                           barSize={20}
-                          animationDuration={800}
                         />
                       </BarChart>
                     </ResponsiveContainer>
@@ -243,14 +238,14 @@ const Analytics = () => {
           </TabsContent>
 
           <TabsContent value="workspaces">
-            <Card className="glass-card">
+            <Card className="border border-white/10">
               <CardHeader>
                 <CardTitle>Workspace Activity</CardTitle>
                 <CardDescription>
                   Reconciliation activity by workspace
                 </CardDescription>
               </CardHeader>
-              <CardContent className="h-80">
+              <CardContent className="h-96">
                 <ChartContainer config={chartConfig}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
@@ -260,17 +255,16 @@ const Analytics = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
                       <XAxis dataKey="name" stroke="rgba(255,255,255,0.7)" />
                       <YAxis stroke="rgba(255,255,255,0.7)" />
-                      <Tooltip content={<ChartTooltipContent />} cursor={{fill: 'rgba(255,255,255,0.03)'}} />
+                      <Tooltip content={<ChartTooltipContent />} />
                       <Legend />
                       <Line
                         type="monotone"
                         dataKey="activity"
                         name="Activity"
                         stroke="#38BDF8"
-                        strokeWidth={2}
-                        dot={{ r: 6, strokeWidth: 2, fill: "#0c1e35" }}
+                        strokeWidth={3}
+                        dot={{ r: 6, strokeWidth: 2, fill: "#0f172a" }}
                         activeDot={{ r: 8, stroke: "#38BDF8", strokeWidth: 2 }}
-                        animationDuration={1000}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -278,7 +272,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <div className="grid gap-4 mt-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 mt-8 md:grid-cols-2 lg:grid-cols-4">
               {workspaceActivityData.map(workspace => (
                 <Card key={workspace.name} className="glass-card card-hover">
                   <CardHeader>

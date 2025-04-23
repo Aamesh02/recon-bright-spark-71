@@ -243,7 +243,7 @@ const Analytics = () => {
                   Reconciliation activity by workspace
                 </CardDescription>
               </CardHeader>
-              <CardContent className="h-96">
+              <CardContent className="h-[400px] mb-8">
                 <ChartContainer config={chartConfig}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
@@ -270,7 +270,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <div className="grid gap-4 mt-16 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 mt-20 md:grid-cols-2 lg:grid-cols-4">
               {workspaceActivityData.map(workspace => (
                 <Card key={workspace.name} className="glass-card card-hover">
                   <CardHeader>

@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart3 } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -36,10 +35,13 @@ const Login = () => {
     <div className="flex min-h-screen bg-gradient-dark items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto w-12 h-12 bg-gradient-button rounded-full flex items-center justify-center mb-4">
-            <BarChart3 className="h-6 w-6 text-primary-foreground" />
+          <div className="mx-auto w-48 h-16 flex items-center justify-center mb-4">
+            <img
+              src="/lovable-uploads/c27b88a7-cf98-47ce-9a0d-6398e4cf91dd.png"
+              alt="Recon Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
-          <h1 className="text-3xl font-bold">Reconciliation Platform</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Sign in to manage your reconciliation processes
           </p>

@@ -53,17 +53,14 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="hidden md:flex flex-col w-64 bg-[#221F26] drop-shadow-xl">
         <div className="p-4">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 flex items-center justify-center mb-2">
+            <div className="w-32 h-12 flex items-center justify-center mb-2">
               <img 
-                src="/lovable-uploads/7825ab35-6c67-4be7-994a-d375f2549f3a.png" 
+                src="/lovable-uploads/c27b88a7-cf98-47ce-9a0d-6398e4cf91dd.png" 
                 alt="Recon Logo" 
-                className="w-12 h-12 object-contain"
+                className="w-full h-full object-contain"
               />
             </div>
-            <div className="text-center">
-              <h1 className="font-semibold text-lg leading-6 text-foreground tracking-tight">Recon Platform</h1>
-              <p className="text-xs text-sidebar-foreground/70">{user?.organization}</p>
-            </div>
+            <p className="text-xs text-sidebar-foreground/70">{user?.organization}</p>
           </div>
           <div className="mb-10"></div>
           <nav className="space-y-1">

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -53,20 +54,20 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="hidden md:flex flex-col w-64 bg-sidebar drop-shadow-xl">
         <div className="p-4">
           <div className="flex flex-col items-center mb-8">
-            {/* Logo box with gradient overlay */}
+            {/* New logo box with gradient overlay */}
             <div className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl overflow-hidden shadow-lg" style={{ background: 'linear-gradient(130deg, #9b87f5 20%, #7E69AB 80%)' }}>
               <img
-                src="/lovable-uploads/7825ab35-6c67-4be7-994a-d375f2549f3a.png"
+                src="/lovable-uploads/495205a4-3da1-453f-ba31-cc10c397df96.png"
                 alt="Recon Platform Logo"
                 className="w-11 h-11 object-contain z-10"
                 draggable={false}
                 style={{ userSelect: 'none' }}
               />
-              {/* Gradient overlay for extra effect */}
+              {/* Gradient overlay for logo */}
               <div
-                className="absolute inset-0 pointer-events-none mix-blend-overlay"
+                className="absolute inset-0 pointer-events-none z-20"
                 style={{
-                  background: 'linear-gradient(120deg,rgba(255,255,255,0.16) 25%,rgba(38,180,255,0.10) 55%,rgba(245,158,11,0.13) 90%)'
+                  background: "linear-gradient(120deg,rgba(255,255,255,0.18) 30%,rgba(38,180,255,0.10) 60%,rgba(245,158,11,0.14) 90%)"
                 }}
               />
             </div>
@@ -75,8 +76,8 @@ const Layout = ({ children }: LayoutProps) => {
               <p className="text-xs text-sidebar-foreground/70">{user?.organization}</p>
             </div>
           </div>
-          {/* Added more space here */}
-          <div className="mb-6" />
+          {/* Increased spacing here for cleaner menu separation */}
+          <div className="mb-10"></div>
           <nav className="space-y-1">
             {navItems.map((item) => (
               <button
@@ -149,3 +150,4 @@ const Layout = ({ children }: LayoutProps) => {
 };
 
 export default Layout;
+

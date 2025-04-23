@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -57,7 +56,7 @@ const Layout = ({ children }: LayoutProps) => {
             {/* Logo box with gradient overlay */}
             <div className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl overflow-hidden shadow-lg" style={{ background: 'linear-gradient(130deg, #9b87f5 20%, #7E69AB 80%)' }}>
               <img
-                src="/lovable-uploads/0c70b918-9bc8-469e-ab5f-4e2854a48e46.png"
+                src="/lovable-uploads/7825ab35-6c67-4be7-994a-d375f2549f3a.png"
                 alt="Recon Platform Logo"
                 className="w-11 h-11 object-contain z-10"
                 draggable={false}
@@ -150,4 +149,3 @@ const Layout = ({ children }: LayoutProps) => {
 };
 
 export default Layout;
-

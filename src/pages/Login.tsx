@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -35,7 +34,7 @@ const Login = () => {
     <div className="flex min-h-screen bg-gradient-dark items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto w-48 h-16 flex items-center justify-center mb-4">
+          <div className="mx-auto w-64 h-32 flex items-center justify-center mb-4">
             <img
               src="/lovable-uploads/c27b88a7-cf98-47ce-9a0d-6398e4cf91dd.png"
               alt="Recon Logo"

@@ -54,8 +54,14 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="hidden md:flex flex-col w-64 bg-sidebar drop-shadow-xl">
         <div className="p-4">
           <div className="flex flex-col items-center mb-8">
-            {/* New logo box with gradient overlay */}
-            <div className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl overflow-hidden shadow-lg" style={{ background: 'linear-gradient(130deg, #9b87f5 20%, #7E69AB 80%)' }}>
+            {/* Logo box with enhanced gradient overlay */}
+            <div 
+              className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl overflow-hidden shadow-lg" 
+              style={{ 
+                background: 'linear-gradient(135deg, #9b87f5 10%, #7E69AB 90%)',
+                boxShadow: '0 0 15px rgba(155, 135, 245, 0.5)'
+              }}
+            >
               <img
                 src="/lovable-uploads/495205a4-3da1-453f-ba31-cc10c397df96.png"
                 alt="Recon Platform Logo"
@@ -63,11 +69,12 @@ const Layout = ({ children }: LayoutProps) => {
                 draggable={false}
                 style={{ userSelect: 'none' }}
               />
-              {/* Gradient overlay for logo */}
+              {/* More prominent gradient overlay */}
               <div
                 className="absolute inset-0 pointer-events-none z-20"
                 style={{
-                  background: "linear-gradient(120deg,rgba(255,255,255,0.18) 30%,rgba(38,180,255,0.10) 60%,rgba(245,158,11,0.14) 90%)"
+                  background: "linear-gradient(120deg, rgba(255,255,255,0.3) 10%, rgba(38,180,255,0.2) 50%, rgba(245,158,11,0.2) 90%)",
+                  mixBlendMode: 'overlay'
                 }}
               />
             </div>
@@ -150,4 +157,3 @@ const Layout = ({ children }: LayoutProps) => {
 };
 
 export default Layout;
-

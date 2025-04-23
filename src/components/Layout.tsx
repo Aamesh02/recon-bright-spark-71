@@ -42,11 +42,9 @@ const Layout = ({ children }: LayoutProps) => {
     if (path === '/dashboard' && location.pathname === '/dashboard') {
       return true;
     }
-    
     if (path !== '/dashboard' && location.pathname.startsWith(path)) {
       return true;
     }
-    
     return false;
   };
 
@@ -55,16 +53,31 @@ const Layout = ({ children }: LayoutProps) => {
       {/* Sidebar */}
       <div className="hidden md:flex flex-col w-64 bg-sidebar drop-shadow-xl">
         <div className="p-4">
-          <div className="flex items-center mb-8">
-            <div className="w-10 h-10 rounded-full bg-gradient-button flex items-center justify-center text-white font-bold text-2xl">
-              R
+          <div className="flex flex-col items-center mb-8">
+            {/* Logo box with gradient overlay */}
+            <div className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl overflow-hidden shadow-lg" style={{ background: 'linear-gradient(130deg, #9b87f5 20%, #7E69AB 80%)' }}>
+              <img
+                src="/lovable-uploads/0c70b918-9bc8-469e-ab5f-4e2854a48e46.png"
+                alt="Recon Platform Logo"
+                className="w-11 h-11 object-contain z-10"
+                draggable={false}
+                style={{ userSelect: 'none' }}
+              />
+              {/* Gradient overlay for extra effect */}
+              <div
+                className="absolute inset-0 pointer-events-none mix-blend-overlay"
+                style={{
+                  background: 'linear-gradient(120deg,rgba(255,255,255,0.16) 25%,rgba(38,180,255,0.10) 55%,rgba(245,158,11,0.13) 90%)'
+                }}
+              />
             </div>
-            <div className="ml-3">
-              <h1 className="font-semibold text-lg">Recon Platform</h1>
+            <div className="text-center">
+              <h1 className="font-semibold text-lg leading-6 text-foreground tracking-tight">Recon Platform</h1>
               <p className="text-xs text-sidebar-foreground/70">{user?.organization}</p>
             </div>
           </div>
-          
+          {/* Added more space here */}
+          <div className="mb-6" />
           <nav className="space-y-1">
             {navItems.map((item) => (
               <button
@@ -137,3 +150,4 @@ const Layout = ({ children }: LayoutProps) => {
 };
 
 export default Layout;
+

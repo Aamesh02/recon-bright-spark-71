@@ -55,9 +55,9 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="flex flex-col items-center mb-8">
             <div className="w-14 h-14 flex items-center justify-center mb-2">
               <img 
-                src="/lovable-uploads/015c83e1-bfd4-4a01-94a0-b408716118ce.png" 
+                src="/lovable-uploads/7825ab35-6c67-4be7-994a-d375f2549f3a.png" 
                 alt="Recon Logo" 
-                className="w-12 h-12"
+                className="w-12 h-12 object-contain"
               />
             </div>
             <div className="text-center">

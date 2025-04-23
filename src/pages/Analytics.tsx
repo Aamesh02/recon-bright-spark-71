@@ -28,7 +28,6 @@ import {
   ChartTooltipContent 
 } from '@/components/ui/chart';
 
-// Mock data for the charts
 const reconciliationData = [
   { name: 'Jan', completed: 45, exceptions: 15 },
   { name: 'Feb', completed: 50, exceptions: 12 },
@@ -46,7 +45,6 @@ const exceptionTypeData = [
   { name: 'Other', value: 15 },
 ];
 
-// More refined color palette for charts
 const COLORS = ['#38BDF8', '#10B981', '#F97316', '#C084FC', '#6366F1'];
 
 const workspaceActivityData = [
@@ -58,9 +56,9 @@ const workspaceActivityData = [
 ];
 
 const chartConfig = {
-  completed: { label: 'Completed', color: '#10B981' }, // More refined green
-  exceptions: { label: 'Exceptions', color: '#C084FC' }, // More refined purple
-  activity: { label: 'Activity', color: '#38BDF8' }, // More refined blue
+  completed: { label: 'Completed', color: '#10B981' },
+  exceptions: { label: 'Exceptions', color: '#C084FC' },
+  activity: { label: 'Activity', color: '#38BDF8' },
 };
 
 const Analytics = () => {
@@ -118,7 +116,7 @@ const Analytics = () => {
             </div>
 
             <div className="mt-8">
-              <Card className="border border-white/10">
+              <Card className="border-none bg-transparent shadow-none">
                 <CardHeader>
                   <CardTitle>Monthly Reconciliation Performance</CardTitle>
                   <CardDescription>
@@ -238,7 +236,7 @@ const Analytics = () => {
           </TabsContent>
 
           <TabsContent value="workspaces">
-            <Card className="border border-white/10">
+            <Card className="border-none bg-transparent shadow-none mt-6">
               <CardHeader>
                 <CardTitle>Workspace Activity</CardTitle>
                 <CardDescription>
@@ -272,7 +270,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <div className="grid gap-4 mt-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 mt-12 md:grid-cols-2 lg:grid-cols-4">
               {workspaceActivityData.map(workspace => (
                 <Card key={workspace.name} className="glass-card card-hover">
                   <CardHeader>

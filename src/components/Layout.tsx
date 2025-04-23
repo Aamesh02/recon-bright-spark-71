@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -19,9 +18,6 @@ import {
 interface LayoutProps {
   children: React.ReactNode;
 }
-
-// Bounce animation for the "R" logo
-const bounceClass = `hover:animate-bounce transition-transform`;
 
 const Layout = ({ children }: LayoutProps) => {
   const { user, logout } = useAuth();
@@ -57,21 +53,18 @@ const Layout = ({ children }: LayoutProps) => {
       <div
         className="
           hidden md:flex flex-col w-64
-          bg-[linear-gradient(140deg,_#7E69AB_0%,_#9b87f5_70%,_#7E69AB_100%)]
+          bg-[#221F26]
           drop-shadow-xl
         "
-        style={{
-          background: 'linear-gradient(140deg, #7E69AB 0%, #9b87f5 80%, #7E69AB 100%)'
-        }}
       >
         <div className="p-4">
           <div className="flex flex-col items-center mb-8">
-            {/* Only the "R" logo, vibrant gradient, bouncy on hover, centered */}
+            {/* Logo */}
             <div
-              className={`relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl shadow-lg overflow-hidden cursor-pointer ${bounceClass}`}
+              className="relative w-14 h-14 flex items-center justify-center mb-2 rounded-xl shadow-lg overflow-hidden cursor-pointer"
               style={{
-                background: 'linear-gradient(135deg, #a389fd 0%, #7E69AB 100%)',
-                boxShadow: '0 0 15px 4px #a389fd33'
+                background: 'linear-gradient(135deg, #7E69AB 0%, #9b87f5 100%)',
+                boxShadow: '0 0 15px 4px rgba(126, 105, 171, 0.3)'
               }}
               tabIndex={0}
               aria-label="Recon Logo"

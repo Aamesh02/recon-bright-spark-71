@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -54,7 +53,7 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="hidden md:flex flex-col w-64 bg-[#221F26] drop-shadow-xl">
         <div className="p-4">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-48 h-24 flex items-center justify-center mb-2">
+            <div className="w-60 h-30 flex items-center justify-center mb-2">
               <img 
                 src="/lovable-uploads/c27b88a7-cf98-47ce-9a0d-6398e4cf91dd.png" 
                 alt="Recon Logo" 

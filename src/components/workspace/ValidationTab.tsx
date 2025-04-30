@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { FileText } from 'lucide-react';
 import { ValidationRule } from '@/types';
 import ValidationRulesList from '@/components/ValidationRulesList';
+import ValidationEntities from '@/components/workspace/ValidationEntities';
 
 interface ValidationTabProps {
   workspaceId: string;
@@ -149,6 +150,18 @@ const ValidationTab: React.FC<ValidationTabProps> = ({ workspaceId }) => {
           <div className="text-sm text-muted-foreground bg-muted/30 p-3 rounded-md">
             <p>The Intelligence Engine can automatically extract validation rules from PDF documents containing predefined rule sets. Upload standard rule documents to have them automatically processed and added to your workspace.</p>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Validation Entities</CardTitle>
+          <CardDescription>
+            Define column mapping for validation between different data sources
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ValidationEntities workspaceId={workspaceId} />
         </CardContent>
       </Card>
 

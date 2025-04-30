@@ -19,6 +19,8 @@ import {
 import { ReconciliationRecord, ValidationRule } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
 import ValidationRulesList from '@/components/ValidationRulesList';
+import FileUpload from '@/components/FileUpload';
+import WorkspaceSettings from '@/components/WorkspaceSettings';
 
 const mockReconciliations: ReconciliationRecord[] = [
   {
@@ -466,23 +468,8 @@ const WorkspaceDetail = () => {
         </TabsContent>
 
         <TabsContent value="settings">
-          <Card>
-            <CardHeader>
-              <CardTitle>Workspace Settings</CardTitle>
-              <CardDescription>
-                Configure workspace preferences and options
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center p-8 text-muted-foreground">
-                <p>Workspace settings will be implemented in the next phase</p>
-                <p className="text-sm mt-2">
-                  This section will include options to manage workspace access, 
-                  notification preferences, and other configuration settings.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Now using our WorkspaceSettings component */}
+          <WorkspaceSettings workspaceId={workspaceId || ''} />
         </TabsContent>
       </Tabs>
     </Layout>

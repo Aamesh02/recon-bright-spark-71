@@ -13,6 +13,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import UserManagement from "./pages/UserManagement";
 import Analytics from "./pages/Analytics";
+import ReconSettings from "./pages/ReconSettings";
+import ReportingSettings from "./pages/ReportingSettings";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,16 @@ const App = () => (
             <Route path="/analytics" element={
               <ProtectedRoute>
                 <Analytics />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <ReconSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/reporting" element={
+              <ProtectedRoute>
+                <ReportingSettings />
               </ProtectedRoute>
             } />
             

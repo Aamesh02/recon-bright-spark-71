@@ -1,131 +1,122 @@
-
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  LayoutDashboard,
-  Settings,
-  FileText,
-  BarChart3,
-  Users,
-  Search,
-  LogOut,
-  PlusCircle
-} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { LogOut, Menu, X, LayoutDashboard, Users, BarChart3, Settings, FileText } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
+  const isMobile = useMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const navItems = [
-    { name: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" />, path: '/dashboard' },
-    { name: 'Recon Settings', icon: <Settings className="w-5 h-5" />, path: '/settings' },
-    { name: 'Reporting Settings', icon: <FileText className="w-5 h-5" />, path: '/reporting' },
-    { name: 'Analytics', icon: <BarChart3 className="w-5 h-5" />, path: '/analytics' },
-    { name: 'User Management', icon: <Users className="w-5 h-5" />, path: '/users' },
+  const navigation = [
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Users', href: '/users', icon: Users },
+    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+    { name: 'Settings', href: '/settings', icon: Settings },
+    { name: 'Reporting', href: '/reporting', icon: FileText },
   ];
 
-  const isActive = (path: string) => {
-    if (path === '/dashboard' && location.pathname === '/dashboard') {
-      return true;
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+    } catch (error) {
+      toast({
+        title: "Logout Failed",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive",
+      });
     }
-    if (path !== '/dashboard' && location.pathname.startsWith(path)) {
-      return true;
-    }
-    return false;
   };
 
   return (
-    <div className="flex h-screen bg-gradient-dark overflow-hidden">
-      {/* Sidebar */}
-      <div className="hidden md:flex flex-col w-64 bg-[#221F26] drop-shadow-xl">
-        <div className="p-4">
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-60 h-30 flex items-center justify-center mb-2">
-              <img 
-                src="/lovable-uploads/c27b88a7-cf98-47ce-9a0d-6398e4cf91dd.png" 
-                alt="Recon Logo" 
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <p className="text-xs text-sidebar-foreground/70">{user?.organization}</p>
+    <div className="min-h-screen flex">
+      <div className={cn(
+        "w-64 bg-card h-screen fixed border-r transition-transform",
+        isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0",
+        "z-40"
+      )}>
+        <div className="p-6 flex flex-col h-full">
+          <div className="flex items-center justify-between mb-8">
+            <Link to="/dashboard" className="flex items-center">
+              {/* LOGO SIZE ADJUSTED HERE */}
+              <img src="/placeholder.svg" alt="Recon" className="h-8 w-8 mr-2" />
+              <h1 className="font-bold text-xl">Recon</h1>
+            </Link>
+            {isMobile && (
+              <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
-          <div className="mb-10"></div>
-          <nav className="space-y-1">
-            {navItems.map((item) => (
-              <button
-                key={item.name}
-                onClick={() => navigate(item.path)}
-                className={`sidebar-item ${isActive(item.path) ? 'active' : ''}`}
-              >
-                <span className={isActive(item.path) ? 'text-cyan-blue mr-3' : 'text-sidebar-foreground/70 mr-3'}>
-                  {item.icon}
-                </span>
-                <span>{item.name}</span>
-              </button>
-            ))}
+
+          <nav className="flex-grow">
+            <ul className="space-y-2">
+              {navigation.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={item.href}
+                    className={cn(
+                      "flex items-center space-x-2 rounded-md p-2 text-sm font-medium hover:bg-secondary hover:text-secondary-foreground",
+                      location.pathname === item.href ? "bg-secondary text-secondary-foreground" : "text-muted-foreground"
+                    )}
+                    onClick={() => isMobile && setSidebarOpen(false)}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </nav>
-        </div>
-        <div className="mt-auto p-4 border-t border-sidebar-border/40">
-          <button
-            onClick={handleLogout}
-            className="sidebar-item group"
-          >
-            <LogOut className="w-5 h-5 text-sidebar-foreground/70 group-hover:text-sidebar-foreground mr-3" />
-            <span>Logout</span>
-          </button>
+
+          <Separator />
+
+          <div className="mt-auto pt-6">
+            <div className="flex items-center space-x-2">
+              <Avatar>
+                <AvatarImage src={user?.avatar} />
+                <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm font-medium">{user?.name}</p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
+              </div>
+            </div>
+            <Button variant="outline" className="mt-4 w-full" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top navigation */}
-        <header className="bg-black/30 backdrop-blur-sm shadow-md z-10">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search reconciliation tasks..."
-                  className="w-[300px] pl-9 bg-black/30 border-white/10"
-                />
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button className="gradient-btn">
-                <PlusCircle className="w-4 h-4 mr-2" />
-                <span>Create</span>
-              </Button>
-              <div className="flex items-center">
-                <div className="mr-3 text-right">
-                  <div className="font-medium">{user?.name}</div>
-                  <div className="text-xs text-gray-400">{user?.email}</div>
-                </div>
-                <Avatar>
-                  <AvatarImage src={user?.avatar} alt={user?.name} />
-                  <AvatarFallback className="bg-gradient-button">{user?.name ? user.name.charAt(0) : 'U'}</AvatarFallback>
-                </Avatar>
-              </div>
-            </div>
-          </div>
-        </header>
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-transparent p-6">
-          {children}
-        </main>
+      {isMobile && sidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setSidebarOpen(false)}></div>
+      )}
+
+      <div className="flex-1 pl-64 p-8">
+        {isMobile && (
+          <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50" onClick={() => setSidebarOpen(true)}>
+            <Menu className="h-6 w-6" />
+          </Button>
+        )}
+        {children}
       </div>
     </div>
   );

@@ -3,9 +3,17 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
-import { Upload, Download, Calendar, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
-import { ReconciliationRecord } from '@/types';
+import { useToast } from '@/hooks/use-toast';
+import { Upload, Download, Calendar, AlertTriangle, CheckCircle, Clock, Filter, Zap } from 'lucide-react';
+import { ReconciliationRecord, ExceptionRecord } from '@/types';
+import ExceptionDetail from '@/components/ExceptionDetail';
+import ScratchPad from '@/components/exception/ScratchPad';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ReconciliationsTabProps {
   workspaceId: string;
@@ -54,9 +62,57 @@ const mockReconciliations: ReconciliationRecord[] = [
   }
 ];
 
+const mockExceptions: ExceptionRecord[] = [
+  {
+    id: 'exc-1',
+    recordId: 'TX-10031',
+    rule: 'Amount must match between sources',
+    source1Value: '₹15,000.00',
+    source2Value: '₹14,850.00',
+    status: 'open'
+  },
+  {
+    id: 'exc-2',
+    recordId: 'TX-10054',
+    rule: 'Transaction date must be within 24 hours',
+    source1Value: '2023-10-15 09:30:00',
+    source2Value: '2023-10-16 15:45:00',
+    status: 'open'
+  },
+  {
+    id: 'exc-3',
+    recordId: 'TX-10078',
+    rule: 'Customer ID must match',
+    source1Value: 'CUST-789456',
+    source2Value: 'CUST-789457',
+    status: 'open'
+  },
+  {
+    id: 'exc-4',
+    recordId: 'TX-10092',
+    rule: 'EMI term months must match',
+    source1Value: '12',
+    source2Value: '18',
+    status: 'in-suspense'
+  },
+  {
+    id: 'exc-5',
+    recordId: 'TX-10103',
+    rule: 'Interest rate must be equal',
+    source1Value: '12.5%',
+    source2Value: '12.0%',
+    status: 'resolved'
+  }
+];
+
 const ReconciliationsTab: React.FC<ReconciliationsTabProps> = ({ workspaceId }) => {
   const [file1, setFile1] = useState<File | null>(null);
   const [file2, setFile2] = useState<File | null>(null);
+  const [selectedRecon, setSelectedRecon] = useState<string | null>(null);
+  const [selectedExceptionId, setSelectedExceptionId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [exceptions, setExceptions] = useState<ExceptionRecord[]>(mockExceptions);
+  const [isRecommending, setIsRecommending] = useState(false);
   const { toast } = useToast();
 
   const handleFileChange = (
@@ -117,11 +173,54 @@ const ReconciliationsTab: React.FC<ReconciliationsTabProps> = ({ workspaceId }) 
   };
   
   const handleViewExceptions = (reconId: string) => {
+    setSelectedRecon(reconId);
     toast({
       title: "Viewing exceptions",
       description: `Showing exceptions for reconciliation ${reconId}`,
     });
   };
+
+  const handleExceptionClick = (exceptionId: string) => {
+    setSelectedExceptionId(exceptionId);
+  };
+
+  const handleCloseExceptionDetail = () => {
+    setSelectedExceptionId(null);
+  };
+
+  const handleResolveException = (id: string, notes: string, status: 'resolved' | 'in-suspense' | 'closed') => {
+    setExceptions(prev => 
+      prev.map(exception => 
+        exception.id === id ? { ...exception, status, notes } : exception
+      )
+    );
+    
+    toast({
+      title: `Exception ${status === 'resolved' ? 'resolved' : status === 'in-suspense' ? 'marked as in-suspense' : 'closed'}`,
+      description: `The exception has been successfully ${status === 'resolved' ? 'resolved' : status === 'in-suspense' ? 'marked as in-suspense' : 'closed'}`,
+    });
+  };
+
+  const handleAutoRecommendAll = () => {
+    setIsRecommending(true);
+    toast({
+      title: "Processing",
+      description: "Generating recommendations for all exceptions...",
+    });
+    
+    // Simulate AI recommendation (would be a real API call in production)
+    setTimeout(() => {
+      setIsRecommending(false);
+      toast({
+        title: "Recommendations Ready",
+        description: "AI recommendations have been generated for all exceptions",
+      });
+    }, 2500);
+  };
+
+  const filteredExceptions = statusFilter 
+    ? exceptions.filter(exception => exception.status === statusFilter)
+    : exceptions;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -148,6 +247,8 @@ const ReconciliationsTab: React.FC<ReconciliationsTabProps> = ({ workspaceId }) 
         return null;
     }
   };
+
+  const selectedException = exceptions.find(exc => exc.id === selectedExceptionId);
 
   return (
     <div className="space-y-4">
@@ -201,74 +302,190 @@ const ReconciliationsTab: React.FC<ReconciliationsTabProps> = ({ workspaceId }) 
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Reconciliations</CardTitle>
-          <CardDescription>
-            History of reconciliation processes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="pb-3 text-left font-medium">Date</th>
-                  <th className="pb-3 text-left font-medium">Status</th>
-                  <th className="pb-3 text-right font-medium">Total Records</th>
-                  <th className="pb-3 text-right font-medium">Matched</th>
-                  <th className="pb-3 text-right font-medium">Exceptions</th>
-                  <th className="pb-3 text-right font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockReconciliations.map((recon) => (
-                  <tr key={recon.id} className="border-b hover:bg-muted/50">
-                    <td className="py-3 flex items-center">
-                      <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                      {recon.date}
-                    </td>
-                    <td className="py-3">
-                      <div className="flex items-center">
-                        {getStatusIcon(recon.status)}
-                        <span className="ml-2">{getStatusBadge(recon.status)}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 text-right">{recon.totalRecords}</td>
-                    <td className="py-3 text-right">{recon.matchedRecords}</td>
-                    <td className="py-3 text-right font-medium">
-                      <span className={recon.exceptionRecords > 0 ? "text-red-600" : ""}>
-                        {recon.exceptionRecords}
-                      </span>
-                    </td>
-                    <td className="py-3 text-right space-x-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => handleDownloadReconciliation(recon.id)}
-                        title="Download report"
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      {recon.status === 'exception' && (
+      {selectedRecon ? (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>Exceptions for Reconciliation #{selectedRecon}</CardTitle>
+              <CardDescription>
+                Review and resolve individual exceptions
+              </CardDescription>
+            </div>
+            <div className="flex space-x-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Filter className="h-4 w-4 mr-2" />
+                    {statusFilter ? `Filter: ${statusFilter}` : 'Filter'} 
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setStatusFilter(null)}>
+                    All Statuses
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter('open')}>
+                    Open
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter('in-suspense')}>
+                    In-Suspense
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter('resolved')}>
+                    Resolved
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter('closed')}>
+                    Closed
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleAutoRecommendAll}
+                disabled={isRecommending}
+              >
+                <Zap className="h-4 w-4 mr-2" />
+                Auto-Recommend All
+              </Button>
+              
+              <ScratchPad />
+              
+              <Button variant="ghost" size="sm" onClick={() => setSelectedRecon(null)}>
+                Back to List
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="pb-3 text-left font-medium">Record ID</th>
+                    <th className="pb-3 text-left font-medium">Rule</th>
+                    <th className="pb-3 text-left font-medium">Source 1</th>
+                    <th className="pb-3 text-left font-medium">Source 2</th>
+                    <th className="pb-3 text-left font-medium">Status</th>
+                    <th className="pb-3 text-right font-medium">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredExceptions.map((exception) => (
+                    <tr key={exception.id} className="border-b hover:bg-muted/50 cursor-pointer" onClick={() => handleExceptionClick(exception.id)}>
+                      <td className="py-3">{exception.recordId}</td>
+                      <td className="py-3">{exception.rule}</td>
+                      <td className="py-3 font-mono text-sm">{exception.source1Value}</td>
+                      <td className="py-3 font-mono text-sm">{exception.source2Value}</td>
+                      <td className="py-3">
+                        <span className={`px-2 py-1 rounded-md text-xs font-medium ${
+                          exception.status === 'open'
+                            ? 'bg-amber-100 text-amber-800'
+                            : exception.status === 'resolved'
+                              ? 'bg-green-100 text-green-800'
+                              : exception.status === 'in-suspense'
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-red-100 text-red-800'
+                        }`}>
+                          {exception.status.charAt(0).toUpperCase() + exception.status.slice(1)}
+                        </span>
+                      </td>
+                      <td className="py-3 text-right">
+                        <Button variant="ghost" size="icon" onClick={(e) => {
+                          e.stopPropagation();
+                          handleExceptionClick(exception.id);
+                        }}>
+                          <AlertTriangle className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              
+              {filteredExceptions.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No exceptions found matching the selected filter
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Reconciliations</CardTitle>
+            <CardDescription>
+              History of reconciliation processes
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="pb-3 text-left font-medium">Date</th>
+                    <th className="pb-3 text-left font-medium">Status</th>
+                    <th className="pb-3 text-right font-medium">Total Records</th>
+                    <th className="pb-3 text-right font-medium">Matched</th>
+                    <th className="pb-3 text-right font-medium">Exceptions</th>
+                    <th className="pb-3 text-right font-medium">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockReconciliations.map((recon) => (
+                    <tr key={recon.id} className="border-b hover:bg-muted/50">
+                      <td className="py-3 flex items-center">
+                        <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                        {recon.date}
+                      </td>
+                      <td className="py-3">
+                        <div className="flex items-center">
+                          {getStatusIcon(recon.status)}
+                          <span className="ml-2">{getStatusBadge(recon.status)}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 text-right">{recon.totalRecords}</td>
+                      <td className="py-3 text-right">{recon.matchedRecords}</td>
+                      <td className="py-3 text-right font-medium">
+                        <span className={recon.exceptionRecords > 0 ? "text-red-600" : ""}>
+                          {recon.exceptionRecords}
+                        </span>
+                      </td>
+                      <td className="py-3 text-right space-x-2">
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="text-amber-600"
-                          onClick={() => handleViewExceptions(recon.id)}
-                          title="View exceptions"
+                          onClick={() => handleDownloadReconciliation(recon.id)}
+                          title="Download report"
                         >
-                          <AlertTriangle className="h-4 w-4" />
+                          <Download className="h-4 w-4" />
                         </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+                        {recon.status === 'exception' && (
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-amber-600"
+                            onClick={() => handleViewExceptions(recon.id)}
+                            title="View exceptions"
+                          >
+                            <AlertTriangle className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <ExceptionDetail
+        exception={selectedException || null}
+        isOpen={!!selectedExceptionId}
+        onClose={handleCloseExceptionDetail}
+        onResolve={handleResolveException}
+      />
     </div>
   );
 };

@@ -48,7 +48,7 @@ export interface ExceptionRecord {
   rule: string;
   source1Value: string;
   source2Value: string;
-  status: 'open' | 'resolved' | 'in-suspense';
+  status: 'open' | 'resolved' | 'in-suspense' | 'closed';
   notes?: string;
 }
 

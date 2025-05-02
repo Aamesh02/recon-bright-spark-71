@@ -54,18 +54,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         "z-40"
       )}>
         <div className="p-6 flex flex-col h-full">
-          <div className="flex items-center justify-between mb-8">
-            <Link to="/dashboard" className="flex items-center">
-              <div className="text-[#33C3F0] mr-2">
+          <div className="flex flex-col items-center justify-center mb-8">
+            <Link to="/dashboard" className="flex flex-col items-center">
+              <div className="text-[#33C3F0] mb-1">
                 <img 
-                  src="/lovable-uploads/f8c4cb81-ae34-49c8-8d8d-6cded9b45efd.png" 
+                  src="/lovable-uploads/41a0de94-8418-48c8-9405-12d773f82150.png" 
                   alt="RECON Logo" 
                   className="h-8"
                 />
               </div>
+              <span className="text-sm font-medium text-gray-300">ACME Finance</span>
             </Link>
             {isMobile && (
-              <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
+              <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="absolute right-2 top-2">
                 <X className="h-4 w-4" />
               </Button>
             )}

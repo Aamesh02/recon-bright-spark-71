@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 @tailwind base;
@@ -158,4 +159,17 @@
 
 .status-badge-exception {
   @apply bg-red-900/50 text-red-200 px-2 py-1 rounded-full text-xs font-medium;
+}
+
+/* Modal alignment fixes */
+[data-state="open"].fixed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radix-dialog-content {
+  width: 90%;
+  max-width: 500px;
+  margin: 0 auto;
 }

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,13 +7,36 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, AlertCircle, CheckCircle2, BarChart, Factory, Percent } from 'lucide-react';
+import { PlusCircle, AlertCircle, CheckCircle2, BarChart, Factory, Percent, Upload } from 'lucide-react';
 import { WorkspaceCard } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
 import FileUpload from '@/components/FileUpload';
 
+// Extended type for active workspaces
+interface ActiveWorkspace extends WorkspaceCard {
+  id: string;
+  active: boolean;
+}
+
+// Simulate file processing and column detection
+const processFile = (file: File) => {
+  // Simulate column detection - in a real app, we'd parse the CSV/Excel
+  return {
+    headers: [
+      'item_date', 'purchase_date', 'order_reference', 
+      'invoice_number', 'amount', 'emi'
+    ],
+    rowCount: Math.floor(Math.random() * 1000) + 200,
+    detectFormat: file.name.endsWith('.csv') ? 'CSV' : 'Excel',
+    sampleData: [
+      { item_date: '2023-04-15', amount: '₹24,500', order_reference: 'ORD-12345' },
+      { item_date: '2023-04-16', amount: '₹32,100', order_reference: 'ORD-12346' }
+    ]
+  };
+};
+
 // Mock data for workspace cards
-const mockWorkspaces: WorkspaceCard[] = [
+const initialWorkspaces: WorkspaceCard[] = [
   {
     id: '1',
     name: 'Samsung Brand EMI Program',
@@ -68,12 +92,41 @@ const mockWorkspaces: WorkspaceCard[] = [
 ];
 
 const Dashboard = () => {
+  // State variables
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
+  const [workspaces, setWorkspaces] = useState<WorkspaceCard[]>(initialWorkspaces);
   const [file1, setFile1] = useState<File | null>(null);
   const [file2, setFile2] = useState<File | null>(null);
+  const [isProcessingFiles, setIsProcessingFiles] = useState(false);
+  const [columnsDetected, setColumnsDetected] = useState<{file1: string[], file2: string[]}>({ file1: [], file2: [] });
+  const [isAutoMatching, setIsAutoMatching] = useState(false);
+  const [matchedFields, setMatchedFields] = useState<{field1: string, field2: string}[]>([]);
+  const [brandLogo, setBrandLogo] = useState<string>('/placeholder.svg');
+  
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Process uploaded files to detect columns
+  useEffect(() => {
+    if (file1 && file2) {
+      // Process files to extract headers
+      const file1Results = processFile(file1);
+      const file2Results = processFile(file2);
+      
+      setColumnsDetected({
+        file1: file1Results.headers,
+        file2: file2Results.headers
+      });
+      
+      // Auto-suggest some field matches based on similar column names
+      const suggestedMatches = file1Results.headers
+        .filter(header => file2Results.headers.includes(header))
+        .map(header => ({ field1: header, field2: header }));
+      
+      setMatchedFields(suggestedMatches);
+    }
+  }, [file1, file2]);
 
   const handleCreateWorkspace = () => {
     if (!newWorkspaceName || !file1 || !file2) {
@@ -85,10 +138,14 @@ const Dashboard = () => {
       return;
     }
 
+    // Set processing state
+    setIsProcessingFiles(true);
+    
     // In a real app, you would send these files to your backend
     console.log('Creating workspace:', newWorkspaceName);
     console.log('File 1:', file1);
     console.log('File 2:', file2);
+    console.log('Matched fields:', matchedFields);
 
     // Simulate processing delay
     toast({
@@ -96,11 +153,41 @@ const Dashboard = () => {
       description: "Analyzing files and creating workspace...",
     });
 
+    // Simulate Intelligence Engine processing
     setTimeout(() => {
+      setIsProcessingFiles(false);
+      
+      // Generate a random match percentage between 85-100
+      const totalRecords = Math.floor(Math.random() * 1000) + 200;
+      const matchPercentage = Math.random() * 15 + 85; // 85-100%
+      const matchedRecords = Math.floor(totalRecords * (matchPercentage / 100));
+      const pendingExceptions = totalRecords - matchedRecords;
+      
+      // Create new workspace
+      const newWorkspace: WorkspaceCard = {
+        id: crypto.randomUUID(),
+        name: newWorkspaceName,
+        description: `Reconciliation workspace for ${newWorkspaceName}`,
+        lastUpdated: new Date().toISOString().split('T')[0],
+        pendingExceptions: pendingExceptions,
+        totalRecords: totalRecords,
+        matchedRecords: matchedRecords,
+        brand: {
+          name: newWorkspaceName.split(' ')[0], // Use first word as brand name
+          logo: brandLogo
+        }
+      };
+      
+      // Add to workspaces
+      setWorkspaces([newWorkspace, ...workspaces]);
+      
+      // Reset form
       setIsCreatingWorkspace(false);
       setNewWorkspaceName('');
       setFile1(null);
       setFile2(null);
+      setMatchedFields([]);
+      setBrandLogo('/placeholder.svg');
       
       toast({
         title: "Workspace created",
@@ -108,8 +195,38 @@ const Dashboard = () => {
       });
       
       // In a real app, navigate to the new workspace
-      // navigate(`/workspace/new-id`);
-    }, 2000);
+      // navigate(`/workspace/${newWorkspace.id}`);
+    }, 2500);
+  };
+
+  const handleAutoMatch = () => {
+    if (!file1 || !file2) return;
+    
+    setIsAutoMatching(true);
+    
+    toast({
+      title: "Auto-matching columns",
+      description: "Intelligence Engine is analyzing and matching columns...",
+    });
+    
+    // Simulate auto-matching process
+    setTimeout(() => {
+      // Create matched fields based on similar column names
+      const automaticMatches = [
+        { field1: 'item_date', field2: 'purchase_date' },
+        { field1: 'order_reference', field2: 'order_reference' },
+        { field1: 'amount', field2: 'amount' },
+        { field1: 'emi', field2: 'emi' }
+      ];
+      
+      setMatchedFields(automaticMatches);
+      setIsAutoMatching(false);
+      
+      toast({
+        title: "Auto-match complete",
+        description: `Successfully matched ${automaticMatches.length} columns`,
+      });
+    }, 1500);
   };
 
   const handleWorkspaceClick = (workspaceId: string) => {
@@ -129,16 +246,26 @@ const Dashboard = () => {
 
   // Calculate total stats for KPI tiles
   const totalGMV = "₹143.8M";
-  const totalWorkspaces = mockWorkspaces.length;
+  const totalWorkspaces = workspaces.length;
   const avgMatchPercentage = Math.round(
-    mockWorkspaces.reduce((sum, workspace) => sum + getMatchPercentage(workspace), 0) / mockWorkspaces.length
+    workspaces.reduce((sum, workspace) => sum + getMatchPercentage(workspace), 0) / workspaces.length
   );
 
-    // Helper function to get dynamic logo URL from Clearbit (fallback to placeholder)
-    const getBrandLogoUrl = (brandName: string) => {
-      // Use Clearbit Logo API for demonstration, fallback to placeholder.svg if fetch fails
-      return `https://logo.clearbit.com/${encodeURIComponent(brandName.replace(/\s+/g, '') + ".com")}`;
-    };
+  // Helper function to get dynamic logo URL from Clearbit (fallback to placeholder)
+  const getBrandLogoUrl = (brandName: string) => {
+    // Use Clearbit Logo API for demonstration, fallback to placeholder.svg if fetch fails
+    return `https://logo.clearbit.com/${encodeURIComponent(brandName.replace(/\s+/g, '') + ".com")}`;
+  };
+
+  // Generate a random brand logo for new workspace
+  useEffect(() => {
+    if (newWorkspaceName) {
+      const brandName = newWorkspaceName.split(' ')[0];
+      // Try to get a logo from Clearbit
+      const logoUrl = getBrandLogoUrl(brandName);
+      setBrandLogo(logoUrl);
+    }
+  }, [newWorkspaceName]);
 
   return (
     <Layout>
@@ -157,7 +284,7 @@ const Dashboard = () => {
             </Button>
           </DialogTrigger>
           <DialogContent
-            className="max-w-[410px] rounded-2xl glass-card border border-white/20" // less width, more rounding
+            className="max-w-[700px] rounded-2xl glass-card border border-white/20"
             style={{
               minWidth: 0,
               boxShadow: "0 8px 32px 0 rgba(80,40,192,0.26), 0 1.5px 7.5px 0 #7e69ab22",
@@ -182,29 +309,102 @@ const Dashboard = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Source 1 File</Label>
-                <FileUpload
-                  label="Source 1"
-                  onFileChange={(file) => setFile1(file)}
-                />
-              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Source 1 File</Label>
+                  <FileUpload
+                    label="Source 1"
+                    onFileChange={(file) => setFile1(file)}
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label>Source 2 File</Label>
-                <FileUpload
-                  label="Source 2"
-                  onFileChange={(file) => setFile2(file)}
-                />
+                <div className="space-y-2">
+                  <Label>Source 2 File</Label>
+                  <FileUpload
+                    label="Source 2"
+                    onFileChange={(file) => setFile2(file)}
+                  />
+                </div>
               </div>
+              
+              {/* Show detected columns when both files are uploaded */}
+              {file1 && file2 && columnsDetected.file1.length > 0 && (
+                <div className="space-y-4 mt-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-sm font-medium">Detected Columns</h3>
+                    <Button 
+                      size="sm" 
+                      onClick={handleAutoMatch} 
+                      disabled={isAutoMatching}
+                      className="text-xs h-8"
+                    >
+                      {isAutoMatching ? "Processing..." : "AutoMatch"}
+                    </Button>
+                  </div>
+                  
+                  <div className="bg-gray-800/40 rounded-lg p-4">
+                    <div className="grid grid-cols-2 gap-4 mb-3">
+                      <div>
+                        <h4 className="text-xs text-gray-400 uppercase mb-2">Source 1</h4>
+                        <div className="space-y-1">
+                          {columnsDetected.file1.map((column, i) => (
+                            <div 
+                              key={`file1-${i}`} 
+                              className="text-sm bg-gray-700/30 px-2 py-1 rounded"
+                            >
+                              {column}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="text-xs text-gray-400 uppercase mb-2">Source 2</h4>
+                        <div className="space-y-1">
+                          {columnsDetected.file2.map((column, i) => (
+                            <div 
+                              key={`file2-${i}`} 
+                              className="text-sm bg-gray-700/30 px-2 py-1 rounded"
+                            >
+                              {column}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Matched Fields Section */}
+                    {matchedFields.length > 0 && (
+                      <div className="mt-4 border-t border-gray-700 pt-4">
+                        <h4 className="text-xs text-gray-400 uppercase mb-2">Mapped Fields</h4>
+                        <div className="space-y-2">
+                          {matchedFields.map((match, i) => (
+                            <div 
+                              key={`match-${i}`} 
+                              className="flex items-center justify-between bg-indigo-900/30 px-3 py-2 rounded-lg"
+                            >
+                              <span className="text-sm">{match.field1}</span>
+                              <span className="text-gray-400">↔</span>
+                              <span className="text-sm">{match.field2}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex justify-end gap-4">
               <Button variant="outline" onClick={() => setIsCreatingWorkspace(false)}
                 className="hover:bg-white/10 border-white/20">
                 Cancel
               </Button>
-              <Button onClick={handleCreateWorkspace} className="gradient-btn">
-                Create Workspace
+              <Button 
+                onClick={handleCreateWorkspace} 
+                className="gradient-btn"
+                disabled={isProcessingFiles || !file1 || !file2 || !newWorkspaceName}
+              >
+                {isProcessingFiles ? "Processing..." : "Create Workspace"}
               </Button>
             </div>
           </DialogContent>
@@ -235,7 +435,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {mockWorkspaces.map((workspace) => (
+        {workspaces.map((workspace) => (
           <Card
             key={workspace.id}
             className="glass-card card-hover cursor-pointer"
@@ -244,7 +444,15 @@ const Dashboard = () => {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center overflow-hidden">
-                  <img src={workspace.brand.logo} alt={workspace.brand.name} className="w-6 h-6" />
+                  <img 
+                    src={workspace.brand.logo || getBrandLogoUrl(workspace.brand.name)} 
+                    alt={workspace.brand.name}
+                    className="w-6 h-6"
+                    onError={(e) => {
+                      // Fallback to placeholder if logo fails to load
+                      (e.target as HTMLImageElement).src = '/placeholder.svg';
+                    }}
+                  />
                 </div>
                 <CardTitle className="text-lg">{workspace.brand.name}</CardTitle>
               </div>

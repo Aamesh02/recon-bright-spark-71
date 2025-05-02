@@ -3,607 +3,539 @@ import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FileText, Mail, Download, Calendar, Clock, BarChart3, Users } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Textarea } from '@/components/ui/textarea';
+import { Check, CheckCircle2, PlusCircle, Search, Settings, Upload } from 'lucide-react';
 
 const ReportingSettings = () => {
-  const [activeTab, setActiveTab] = useState('templates');
+  const [activeTab, setActiveTab] = useState('email');
   const { toast } = useToast();
-  
-  const [reportTemplates, setReportTemplates] = useState([
-    { id: 1, name: 'Daily Reconciliation Summary', type: 'summary', format: 'pdf', enabled: true },
-    { id: 2, name: 'Exception Report', type: 'exception', format: 'excel', enabled: true },
-    { id: 3, name: 'Monthly Analytics', type: 'analytics', format: 'pdf', enabled: true },
-    { id: 4, name: 'Validation Failures', type: 'validation', format: 'excel', enabled: false },
+  const [emailSettings, setEmailSettings] = useState({
+    enabled: true,
+    dailySummary: true,
+    exceptionAlerts: true,
+    weeklyDigest: false,
+    recipientEmail: 'admin@example.com',
+    ccEmail: 'team@example.com'
+  });
+  const [pdfSettings, setPdfSettings] = useState({
+    enabled: true,
+    includeCharts: true,
+    includeRawData: false,
+    detailedExceptions: true,
+    format: 'a4',
+    orientation: 'portrait'
+  });
+  const [apiSettings, setApiSettings] = useState({
+    enabled: false,
+    endpointUrl: 'https://api.example.com/webhook',
+    authToken: 'sk_test_abcdef123456',
+    sendInterval: 'daily',
+    dataFormat: 'json'
+  });
+  const [dashboardSettings, setDashboardSettings] = useState({
+    refreshInterval: '30',
+    showKpis: true,
+    showCharts: true,
+    defaultView: 'summary'
+  });
+  const [templates, setTemplates] = useState([
+    {
+      id: '1',
+      name: 'Daily Exception Report',
+      type: 'email',
+      lastModified: '2023-04-15',
+      status: 'active'
+    },
+    {
+      id: '2',
+      name: 'Weekly Summary PDF',
+      type: 'pdf',
+      lastModified: '2023-04-10',
+      status: 'active'
+    },
+    {
+      id: '3',
+      name: 'Monthly Analytics',
+      type: 'dashboard',
+      lastModified: '2023-03-22',
+      status: 'inactive'
+    },
+    {
+      id: '4',
+      name: 'API Response Template',
+      type: 'api',
+      lastModified: '2023-04-01',
+      status: 'active'
+    }
   ]);
 
-  const [scheduledReports, setScheduledReports] = useState([
-    { 
-      id: 1, 
-      name: 'Daily Reconciliation Summary', 
-      frequency: 'Daily', 
-      recipients: 'finance@example.com', 
-      time: '08:00',
-      enabled: true 
-    },
-    { 
-      id: 2, 
-      name: 'Weekly Exception Report', 
-      frequency: 'Weekly', 
-      recipients: 'operations@example.com, finance@example.com', 
-      time: '09:00',
-      enabled: true 
-    },
-    { 
-      id: 3, 
-      name: 'Monthly Analytics', 
-      frequency: 'Monthly', 
-      recipients: 'management@example.com', 
-      time: '07:00',
-      enabled: true 
-    },
-  ]);
-
-  const toggleTemplate = (id) => {
-    setReportTemplates(reportTemplates.map(template => 
-      template.id === id ? { ...template, enabled: !template.enabled } : template
-    ));
-  };
-
-  const toggleSchedule = (id) => {
-    setScheduledReports(scheduledReports.map(report => 
-      report.id === id ? { ...report, enabled: !report.enabled } : report
-    ));
-  };
-
-  const handleSaveSettings = () => {
+  const handleSaveSettings = (type: string) => {
     toast({
-      title: "Settings Saved",
-      description: "Your reporting settings have been updated.",
-      variant: "default",
+      title: "Settings saved",
+      description: `${type.charAt(0).toUpperCase() + type.slice(1)} settings have been updated.`
+    });
+  };
+
+  const handleToggleTemplate = (id: string) => {
+    setTemplates(templates.map(template => 
+      template.id === id 
+        ? { 
+            ...template, 
+            status: template.status === 'active' ? 'inactive' : 'active' 
+          } 
+        : template
+    ));
+    
+    toast({
+      title: "Template updated",
+      description: "Template status has been toggled."
     });
   };
 
   return (
     <Layout>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight mb-2">Reporting Settings</h1>
           <p className="text-muted-foreground">
-            Configure report templates and delivery options
+            Configure how reconciliation results are reported and distributed
           </p>
         </div>
       </div>
 
-      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="templates">Report Templates</TabsTrigger>
-          <TabsTrigger value="scheduling">Report Scheduling</TabsTrigger>
-          <TabsTrigger value="delivery">Delivery Options</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        </TabsList>
+      <Card className="mb-8">
+        <CardContent className="pt-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="mb-6">
+              <TabsTrigger value="email">Email Reports</TabsTrigger>
+              <TabsTrigger value="pdf">PDF Reports</TabsTrigger>
+              <TabsTrigger value="api">API Integration</TabsTrigger>
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="templates">Report Templates</TabsTrigger>
+            </TabsList>
 
-        {/* Report Templates Tab */}
-        <TabsContent value="templates">
-          <Card>
-            <CardHeader>
-              <CardTitle>Report Templates</CardTitle>
-              <CardDescription>
-                Manage your report templates and formats
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-6">
+            <TabsContent value="email" className="space-y-6">
+              <div className="flex items-center justify-between">
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium">Available Templates</h3>
-                    <Button size="sm" className="gradient-btn">
-                      <FileText className="w-4 h-4 mr-2" />
-                      Add Template
-                    </Button>
-                  </div>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[300px]">Template Name</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Format</TableHead>
-                        <TableHead className="w-[100px] text-center">Enabled</TableHead>
-                        <TableHead className="w-[100px]">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {reportTemplates.map((template) => (
-                        <TableRow key={template.id}>
-                          <TableCell className="font-medium">{template.name}</TableCell>
-                          <TableCell className="capitalize">{template.type}</TableCell>
-                          <TableCell className="uppercase">{template.format}</TableCell>
-                          <TableCell className="text-center">
-                            <Checkbox 
-                              checked={template.enabled}
-                              onCheckedChange={() => toggleTemplate(template.id)}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="sm">Edit</Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <h3 className="text-lg font-medium">Email Reporting</h3>
+                  <p className="text-sm text-muted-foreground">Configure automated email reports and alerts</p>
                 </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Template Configuration</h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div className="space-y-1">
-                        <Label htmlFor="default-format">Default Format</Label>
-                        <Select defaultValue="pdf">
-                          <SelectTrigger id="default-format">
-                            <SelectValue placeholder="Select format" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pdf">PDF</SelectItem>
-                            <SelectItem value="excel">Excel</SelectItem>
-                            <SelectItem value="csv">CSV</SelectItem>
-                            <SelectItem value="html">HTML</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-1">
-                        <Label htmlFor="retention-period">Report Retention Period (days)</Label>
-                        <Input id="retention-period" type="number" defaultValue={90} />
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="space-y-1">
-                        <Label>Default Sections</Label>
-                        <div className="space-y-2 pt-2">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="section-summary" defaultChecked />
-                            <label htmlFor="section-summary" className="text-sm">Summary Statistics</label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="section-exceptions" defaultChecked />
-                            <label htmlFor="section-exceptions" className="text-sm">Exception Details</label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="section-charts" defaultChecked />
-                            <label htmlFor="section-charts" className="text-sm">Charts & Graphs</label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="section-history" />
-                            <label htmlFor="section-history" className="text-sm">Historical Comparison</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    checked={emailSettings.enabled} 
+                    onCheckedChange={(checked) => setEmailSettings({...emailSettings, enabled: checked})}
+                  />
+                  <Label htmlFor="email-enabled">Enabled</Label>
                 </div>
-
-                <Button onClick={handleSaveSettings} className="gradient-btn mt-4">Save Template Settings</Button>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        {/* Report Scheduling Tab */}
-        <TabsContent value="scheduling">
-          <Card>
-            <CardHeader>
-              <CardTitle>Report Scheduling</CardTitle>
-              <CardDescription>
-                Configure when and how often reports are generated
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium">Scheduled Reports</h3>
-                    <Button size="sm" className="gradient-btn">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      Add Schedule
-                    </Button>
-                  </div>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[280px]">Report Name</TableHead>
-                        <TableHead>Frequency</TableHead>
-                        <TableHead>Recipients</TableHead>
-                        <TableHead>Time</TableHead>
-                        <TableHead className="w-[100px] text-center">Enabled</TableHead>
-                        <TableHead className="w-[100px]">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {scheduledReports.map((report) => (
-                        <TableRow key={report.id}>
-                          <TableCell className="font-medium">{report.name}</TableCell>
-                          <TableCell>{report.frequency}</TableCell>
-                          <TableCell className="text-xs">{report.recipients}</TableCell>
-                          <TableCell>{report.time}</TableCell>
-                          <TableCell className="text-center">
-                            <Checkbox 
-                              checked={report.enabled}
-                              onCheckedChange={() => toggleSchedule(report.id)}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="sm">Edit</Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Schedule Configuration</h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div className="space-y-1">
-                        <Label htmlFor="report-template">Report Template</Label>
-                        <Select defaultValue="daily">
-                          <SelectTrigger id="report-template">
-                            <SelectValue placeholder="Select template" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="daily">Daily Reconciliation Summary</SelectItem>
-                            <SelectItem value="exception">Exception Report</SelectItem>
-                            <SelectItem value="monthly">Monthly Analytics</SelectItem>
-                            <SelectItem value="validation">Validation Failures</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-1">
-                        <Label htmlFor="frequency">Frequency</Label>
-                        <Select defaultValue="daily">
-                          <SelectTrigger id="frequency">
-                            <SelectValue placeholder="Select frequency" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="weekly">Weekly</SelectItem>
-                            <SelectItem value="monthly">Monthly</SelectItem>
-                            <SelectItem value="custom">Custom</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-1">
-                        <Label htmlFor="scheduled-time">Scheduled Time</Label>
-                        <Input id="scheduled-time" type="time" defaultValue="08:00" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="space-y-1">
-                        <Label htmlFor="recipients">Recipients</Label>
-                        <Textarea 
-                          id="recipients" 
-                          placeholder="Enter email addresses separated by commas" 
-                        />
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 pt-4">
-                        <Checkbox id="include-attachments" defaultChecked />
-                        <Label htmlFor="include-attachments">Include Attachments</Label>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Checkbox id="include-summary" defaultChecked />
-                        <Label htmlFor="include-summary">Include Summary in Email Body</Label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Button onClick={handleSaveSettings} className="gradient-btn mt-4">Save Schedule Settings</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Delivery Options Tab */}
-        <TabsContent value="delivery">
-          <Card>
-            <CardHeader>
-              <CardTitle>Delivery Options</CardTitle>
-              <CardDescription>
-                Configure how reports are delivered and accessed
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Email Settings</h3>
                   <div className="space-y-2">
-                    <div className="space-y-1">
-                      <Label htmlFor="email-from">From Email Address</Label>
-                      <Input id="email-from" type="email" defaultValue="reports@reconciliation.com" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="email-subject">Default Email Subject</Label>
-                      <Input id="email-subject" defaultValue="[Recon] {ReportName} - {Date}" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="email-template">Email Template</Label>
-                      <Select defaultValue="standard">
-                        <SelectTrigger id="email-template">
-                          <SelectValue placeholder="Select template" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="standard">Standard</SelectItem>
-                          <SelectItem value="minimal">Minimal</SelectItem>
-                          <SelectItem value="detailed">Detailed</SelectItem>
-                          <SelectItem value="custom">Custom</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex items-center space-x-2 pt-2">
-                      <Checkbox id="include-logo" defaultChecked />
-                      <Label htmlFor="include-logo">Include Company Logo</Label>
-                    </div>
+                    <Label htmlFor="recipient-email">Primary Recipient</Label>
+                    <Input 
+                      id="recipient-email" 
+                      value={emailSettings.recipientEmail}
+                      onChange={(e) => setEmailSettings({...emailSettings, recipientEmail: e.target.value})}
+                      placeholder="Email address" 
+                    />
                   </div>
-
-                  <h3 className="text-lg font-medium mt-6">SMTP Configuration</h3>
+                  
                   <div className="space-y-2">
-                    <div className="space-y-1">
-                      <Label htmlFor="smtp-server">SMTP Server</Label>
-                      <Input id="smtp-server" defaultValue="smtp.company.com" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="smtp-port">SMTP Port</Label>
-                      <Input id="smtp-port" type="number" defaultValue="587" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="smtp-username">Username</Label>
-                      <Input id="smtp-username" defaultValue="reports@company.com" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="smtp-password">Password</Label>
-                      <Input id="smtp-password" type="password" value="•••••••••••" />
-                    </div>
-                    <div className="flex items-center space-x-2 pt-2">
-                      <Checkbox id="smtp-ssl" defaultChecked />
-                      <Label htmlFor="smtp-ssl">Use SSL/TLS</Label>
-                    </div>
+                    <Label htmlFor="cc-email">CC Recipients</Label>
+                    <Input 
+                      id="cc-email" 
+                      value={emailSettings.ccEmail}
+                      onChange={(e) => setEmailSettings({...emailSettings, ccEmail: e.target.value})}
+                      placeholder="Separate multiple emails with commas" 
+                    />
                   </div>
                 </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Storage & Access</h3>
-                  <div className="space-y-2">
-                    <div className="space-y-1">
-                      <Label htmlFor="storage-location">Report Storage Location</Label>
-                      <Select defaultValue="cloud">
-                        <SelectTrigger id="storage-location">
-                          <SelectValue placeholder="Select location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="cloud">Cloud Storage</SelectItem>
-                          <SelectItem value="local">Local Storage</SelectItem>
-                          <SelectItem value="sharepoint">SharePoint</SelectItem>
-                          <SelectItem value="s3">AWS S3</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="cloud-path">Storage Path</Label>
-                      <Input id="cloud-path" defaultValue="/reports/{WorkspaceName}/{YYYY-MM-DD}/" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="file-naming">File Naming Convention</Label>
-                      <Input id="file-naming" defaultValue="{ReportType}_{Date}_{Time}.{Extension}" />
-                    </div>
-                    <div className="flex items-center justify-between pt-2">
-                      <Label htmlFor="auto-archive">Auto-Archive Old Reports</Label>
-                      <Switch id="auto-archive" defaultChecked />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="archive-days">Archive After (days)</Label>
-                      <Input id="archive-days" type="number" defaultValue="90" />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="access-control">Enable Access Control</Label>
-                      <Switch id="access-control" defaultChecked />
-                    </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="daily-summary" 
+                      checked={emailSettings.dailySummary}
+                      onCheckedChange={(checked) => setEmailSettings({...emailSettings, dailySummary: !!checked})}
+                    />
+                    <label 
+                      htmlFor="daily-summary" 
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Daily Summary Report
+                    </label>
                   </div>
-
-                  <h3 className="text-lg font-medium mt-6">Alternative Delivery Methods</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="enable-api">API Access</Label>
-                      <Switch id="enable-api" defaultChecked />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="enable-sftp">SFTP Delivery</Label>
-                      <Switch id="enable-sftp" />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="enable-webhook">Webhook Notifications</Label>
-                      <Switch id="enable-webhook" />
-                    </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="exception-alerts" 
+                      checked={emailSettings.exceptionAlerts}
+                      onCheckedChange={(checked) => setEmailSettings({...emailSettings, exceptionAlerts: !!checked})}
+                    />
+                    <label 
+                      htmlFor="exception-alerts" 
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Real-time Exception Alerts
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="weekly-digest" 
+                      checked={emailSettings.weeklyDigest}
+                      onCheckedChange={(checked) => setEmailSettings({...emailSettings, weeklyDigest: !!checked})}
+                    />
+                    <label 
+                      htmlFor="weekly-digest" 
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Weekly Digest
+                    </label>
                   </div>
                 </div>
               </div>
+              
+              <div className="flex justify-end">
+                <Button onClick={() => handleSaveSettings('email')}>Save Email Settings</Button>
+              </div>
+            </TabsContent>
 
-              <Button onClick={handleSaveSettings} className="gradient-btn mt-6">Save Delivery Settings</Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            <TabsContent value="pdf" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium">PDF Reports</h3>
+                  <p className="text-sm text-muted-foreground">Configure PDF report generation settings</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    checked={pdfSettings.enabled} 
+                    onCheckedChange={(checked) => setPdfSettings({...pdfSettings, enabled: checked})}
+                  />
+                  <Label htmlFor="pdf-enabled">Enabled</Label>
+                </div>
+              </div>
 
-        {/* Notifications Tab */}
-        <TabsContent value="notifications">
-          <Card>
-            <CardHeader>
-              <CardTitle>Notification Settings</CardTitle>
-              <CardDescription>
-                Configure alerts and notifications for key events
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Email Notifications</h3>
                   <div className="space-y-2">
-                    <div className="space-y-1">
-                      <Label htmlFor="notification-recipients">Default Recipients</Label>
-                      <Textarea 
-                        id="notification-recipients" 
-                        placeholder="Enter email addresses separated by commas"
-                        defaultValue="alerts@company.com, finance@company.com" 
-                      />
-                    </div>
-                    
-                    <h4 className="font-medium text-md mt-4">Notification Events</h4>
-                    <div className="space-y-2 pt-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="notify-failure" defaultChecked />
-                          <Label htmlFor="notify-failure">Reconciliation Failure</Label>
-                        </div>
-                        <Select defaultValue="high" className="w-28">
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="high">High</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="low">Low</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="notify-exceptions" defaultChecked />
-                          <Label htmlFor="notify-exceptions">Exceptions Above Threshold</Label>
-                        </div>
-                        <Select defaultValue="medium" className="w-28">
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="high">High</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="low">Low</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="notify-complete" defaultChecked />
-                          <Label htmlFor="notify-complete">Reconciliation Complete</Label>
-                        </div>
-                        <Select defaultValue="low" className="w-28">
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="high">High</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="low">Low</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="notify-system" defaultChecked />
-                          <Label htmlFor="notify-system">System Errors</Label>
-                        </div>
-                        <Select defaultValue="high" className="w-28">
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="high">High</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="low">Low</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                    <Label htmlFor="pdf-format">PDF Format</Label>
+                    <Select 
+                      value={pdfSettings.format}
+                      onValueChange={(value) => setPdfSettings({...pdfSettings, format: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select format" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="a4">A4</SelectItem>
+                        <SelectItem value="letter">Letter</SelectItem>
+                        <SelectItem value="legal">Legal</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="pdf-orientation">Orientation</Label>
+                    <Select 
+                      value={pdfSettings.orientation}
+                      onValueChange={(value) => setPdfSettings({...pdfSettings, orientation: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select orientation" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="portrait">Portrait</SelectItem>
+                        <SelectItem value="landscape">Landscape</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Additional Notification Channels</h3>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="slack-integration">Slack Integration</Label>
-                        <Switch id="slack-integration" />
-                      </div>
-                      <div className="space-y-1">
-                        <Label htmlFor="slack-webhook">Webhook URL</Label>
-                        <Input id="slack-webhook" placeholder="https://hooks.slack.com/services/..." />
-                      </div>
-                      <div className="space-y-1">
-                        <Label htmlFor="slack-channel">Default Channel</Label>
-                        <Input id="slack-channel" placeholder="#reconciliation-alerts" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="teams-integration">Microsoft Teams Integration</Label>
-                        <Switch id="teams-integration" />
-                      </div>
-                      <div className="space-y-1">
-                        <Label htmlFor="teams-webhook">Webhook URL</Label>
-                        <Input id="teams-webhook" placeholder="https://outlook.office.com/webhook/..." />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="sms-integration">SMS Notifications</Label>
-                        <Switch id="sms-integration" />
-                      </div>
-                      <div className="space-y-1">
-                        <Label htmlFor="sms-numbers">Phone Numbers</Label>
-                        <Input id="sms-numbers" placeholder="+1234567890, +0987654321" />
-                      </div>
-                      <div className="flex items-center space-x-2 pt-2">
-                        <Checkbox id="sms-critical-only" defaultChecked />
-                        <Label htmlFor="sms-critical-only">Send only for critical alerts</Label>
-                      </div>
-                    </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="include-charts" 
+                      checked={pdfSettings.includeCharts}
+                      onCheckedChange={(checked) => setPdfSettings({...pdfSettings, includeCharts: !!checked})}
+                    />
+                    <label 
+                      htmlFor="include-charts" 
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Include Charts and Graphs
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="include-raw-data" 
+                      checked={pdfSettings.includeRawData}
+                      onCheckedChange={(checked) => setPdfSettings({...pdfSettings, includeRawData: !!checked})}
+                    />
+                    <label 
+                      htmlFor="include-raw-data" 
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Include Raw Data Tables
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="detailed-exceptions" 
+                      checked={pdfSettings.detailedExceptions}
+                      onCheckedChange={(checked) => setPdfSettings({...pdfSettings, detailedExceptions: !!checked})}
+                    />
+                    <label 
+                      htmlFor="detailed-exceptions" 
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Detailed Exception Reports
+                    </label>
                   </div>
                 </div>
               </div>
+              
+              <div className="flex justify-end">
+                <Button onClick={() => handleSaveSettings('pdf')}>Save PDF Settings</Button>
+              </div>
+            </TabsContent>
 
-              <Button onClick={handleSaveSettings} className="gradient-btn mt-6">Save Notification Settings</Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            <TabsContent value="api" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium">API Integration</h3>
+                  <p className="text-sm text-muted-foreground">Configure API webhooks to send reconciliation data</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    checked={apiSettings.enabled} 
+                    onCheckedChange={(checked) => setApiSettings({...apiSettings, enabled: checked})}
+                  />
+                  <Label htmlFor="api-enabled">Enabled</Label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="endpoint-url">Webhook Endpoint URL</Label>
+                  <Input 
+                    id="endpoint-url" 
+                    value={apiSettings.endpointUrl}
+                    onChange={(e) => setApiSettings({...apiSettings, endpointUrl: e.target.value})}
+                    placeholder="https://" 
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="auth-token">Authentication Token</Label>
+                  <Input 
+                    id="auth-token" 
+                    value={apiSettings.authToken}
+                    onChange={(e) => setApiSettings({...apiSettings, authToken: e.target.value})}
+                    placeholder="Auth token" 
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="send-interval">Send Interval</Label>
+                    <Select 
+                      value={apiSettings.sendInterval}
+                      onValueChange={(value) => setApiSettings({...apiSettings, sendInterval: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select interval" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="realtime">Real-time</SelectItem>
+                        <SelectItem value="hourly">Hourly</SelectItem>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="data-format">Data Format</Label>
+                    <Select 
+                      value={apiSettings.dataFormat}
+                      onValueChange={(value) => setApiSettings({...apiSettings, dataFormat: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select format" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="json">JSON</SelectItem>
+                        <SelectItem value="xml">XML</SelectItem>
+                        <SelectItem value="csv">CSV</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end">
+                <Button onClick={() => handleSaveSettings('api')}>Save API Settings</Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="dashboard" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium">Dashboard Settings</h3>
+                  <p className="text-sm text-muted-foreground">Configure dashboard appearance and behavior</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="refresh-interval">Auto-refresh Interval (minutes)</Label>
+                    <Input 
+                      id="refresh-interval" 
+                      type="number"
+                      value={dashboardSettings.refreshInterval}
+                      onChange={(e) => setDashboardSettings({...dashboardSettings, refreshInterval: e.target.value})}
+                      placeholder="30" 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="default-view">Default View</Label>
+                    <Select 
+                      value={dashboardSettings.defaultView}
+                      onValueChange={(value) => setDashboardSettings({...dashboardSettings, defaultView: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select default view" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="summary">Summary</SelectItem>
+                        <SelectItem value="detailed">Detailed</SelectItem>
+                        <SelectItem value="exceptions">Exceptions</SelectItem>
+                        <SelectItem value="analytics">Analytics</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="show-kpis" 
+                      checked={dashboardSettings.showKpis}
+                      onCheckedChange={(checked) => setDashboardSettings({...dashboardSettings, showKpis: !!checked})}
+                    />
+                    <label 
+                      htmlFor="show-kpis" 
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Show KPI Metrics
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="show-charts" 
+                      checked={dashboardSettings.showCharts}
+                      onCheckedChange={(checked) => setDashboardSettings({...dashboardSettings, showCharts: !!checked})}
+                    />
+                    <label 
+                      htmlFor="show-charts" 
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Show Charts and Graphs
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end">
+                <Button onClick={() => handleSaveSettings('dashboard')}>Save Dashboard Settings</Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="templates" className="space-y-6">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-medium">Report Templates</h3>
+                  <p className="text-sm text-muted-foreground">Manage report templates and layouts</p>
+                </div>
+                <Button>
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Add Template
+                </Button>
+              </div>
+
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Template Name</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Last Modified</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {templates.map((template) => (
+                    <TableRow key={template.id}>
+                      <TableCell className="font-medium">{template.name}</TableCell>
+                      <TableCell>
+                        {template.type === 'email' && 'Email Report'}
+                        {template.type === 'pdf' && 'PDF Report'}
+                        {template.type === 'api' && 'API Response'}
+                        {template.type === 'dashboard' && 'Dashboard Widget'}
+                      </TableCell>
+                      <TableCell>{template.lastModified}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          template.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {template.status === 'active' ? 'Active' : 'Inactive'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="h-8 px-2 text-xs"
+                          onClick={() => handleToggleTemplate(template.id)}
+                        >
+                          {template.status === 'active' ? 'Disable' : 'Enable'}
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="h-8 px-2 text-xs"
+                        >
+                          Edit
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </Layout>
   );
 };

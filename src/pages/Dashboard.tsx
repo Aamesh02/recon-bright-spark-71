@@ -281,20 +281,21 @@ const Dashboard = () => {
           </DialogTrigger>
           
           <DialogContent
-            className="max-w-[700px] rounded-2xl glass-card border border-white/20"
+            className="w-full max-w-[700px] rounded-xl glass-card border border-white/20 p-6 mx-auto"
             style={{
-              minWidth: 0,
               boxShadow: "0 8px 32px 0 rgba(80,40,192,0.26), 0 1.5px 7.5px 0 #7e69ab22",
-              background: "rgba(23, 22, 39, 0.96)"
+              background: "rgba(23, 22, 39, 0.96)",
+              overflowY: "auto",
+              maxHeight: "90vh"
             }}
           >
-            <DialogHeader>
-              <DialogTitle>Create new reconciliation workspace</DialogTitle>
+            <DialogHeader className="mb-4">
+              <DialogTitle className="text-xl">Create new reconciliation workspace</DialogTitle>
               <DialogDescription>
                 Upload sample files to automatically configure the workspace
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="space-y-5 py-3">
               <div className="space-y-2">
                 <Label htmlFor="workspace-name">Workspace Name</Label>
                 <Input
@@ -306,7 +307,7 @@ const Dashboard = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Source 1 File</Label>
                   <FileUpload
@@ -340,10 +341,10 @@ const Dashboard = () => {
                   </div>
                   
                   <div className="bg-gray-800/40 rounded-lg p-4">
-                    <div className="grid grid-cols-2 gap-4 mb-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                       <div>
                         <h4 className="text-xs text-gray-400 uppercase mb-2">Source 1</h4>
-                        <div className="space-y-1">
+                        <div className="space-y-1 max-h-40 overflow-y-auto">
                           {columnsDetected.file1.map((column, i) => (
                             <div 
                               key={`file1-${i}`} 
@@ -356,7 +357,7 @@ const Dashboard = () => {
                       </div>
                       <div>
                         <h4 className="text-xs text-gray-400 uppercase mb-2">Source 2</h4>
-                        <div className="space-y-1">
+                        <div className="space-y-1 max-h-40 overflow-y-auto">
                           {columnsDetected.file2.map((column, i) => (
                             <div 
                               key={`file2-${i}`} 
@@ -373,7 +374,7 @@ const Dashboard = () => {
                     {matchedFields.length > 0 && (
                       <div className="mt-4 border-t border-gray-700 pt-4">
                         <h4 className="text-xs text-gray-400 uppercase mb-2">Mapped Fields</h4>
-                        <div className="space-y-2">
+                        <div className="space-y-2 max-h-60 overflow-y-auto">
                           {matchedFields.map((match, i) => (
                             <div 
                               key={`match-${i}`} 
@@ -391,7 +392,7 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-end gap-4 mt-4">
               <Button variant="outline" onClick={() => setIsCreatingWorkspace(false)}
                 className="hover:bg-white/10 border-white/20">
                 Cancel
@@ -409,7 +410,7 @@ const Dashboard = () => {
       </div>
 
       {/* KPI Tiles */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="kpi-tile">
           <BarChart className="h-6 w-6 text-warning mb-2" />
           <div className="kpi-tile-value text-warning">{totalGMV}</div>

@@ -54,13 +54,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         "z-40"
       )}>
         <div className="p-6 flex flex-col h-full">
-          <div className="flex flex-col items-center justify-center mb-8">
+          <div className="flex flex-col items-center justify-center mb-12">
             <Link to="/dashboard" className="flex flex-col items-center">
-              <div className="text-[#33C3F0] mb-1">
+              <div className="text-[#33C3F0] mb-2">
                 <img 
                   src="/lovable-uploads/41a0de94-8418-48c8-9405-12d773f82150.png" 
                   alt="RECON Logo" 
-                  className="h-8"
+                  className="h-10"
                 />
               </div>
               <span className="text-sm font-medium text-gray-300">ACME Finance</span>

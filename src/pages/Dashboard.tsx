@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
+import SearchBar from '@/components/SearchBar';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -269,20 +269,17 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Reconciliation Dashboard</h1>
-          <p className="text-muted-foreground">
-            Manage and monitor your reconciliation workspaces
-          </p>
-        </div>
+      {/* Header section with search bar and create button */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <SearchBar />
         <Dialog open={isCreatingWorkspace} onOpenChange={setIsCreatingWorkspace}>
           <DialogTrigger asChild>
-            <Button className="gradient-btn flex items-center gap-2">
+            <Button className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white flex items-center gap-2">
               <PlusCircle className="w-4 h-4" />
               <span>New Workspace</span>
             </Button>
           </DialogTrigger>
+          
           <DialogContent
             className="max-w-[700px] rounded-2xl glass-card border border-white/20"
             style={{

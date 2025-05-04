@@ -50,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="min-h-screen flex">
       {/* Sidebar - updated to be darker */}
       <div className={cn(
-        "w-72 bg-[#10111A] h-screen fixed border-r border-[#1E2030]/30 transition-transform",
+        "w-72 bg-[#0C0D14] h-screen fixed border-r border-[#1E2030]/30 transition-transform",
         isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0",
         "z-40"
       )}>
@@ -59,9 +59,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <Link to="/dashboard" className="flex flex-col items-center">
               <div className="mb-3">
                 <img 
-                  src="/lovable-uploads/41a0de94-8418-48c8-9405-12d773f82150.png" 
+                  src="/lovable-uploads/b0c15a99-e802-4f2d-8bb2-f2e240a5b6c9.png" 
                   alt="RECON Logo" 
-                  className="h-14"
+                  className="h-16 w-auto"
                 />
               </div>
               <span className="text-sm font-medium text-gray-300">ACME Finance</span>
@@ -118,10 +118,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setSidebarOpen(false)}></div>
       )}
 
-      {/* Main content area - added margin for spacing between sidebar and content */}
+      {/* Main content area - increased margin for more spacing between sidebar and content */}
       <div className={cn(
         "flex-1 p-8",
-        isMobile ? "pl-8" : "pl-80"
+        isMobile ? "pl-8" : "pl-[calc(18rem+2rem)]" // Increased from pl-80 (5rem) to pl-[calc(18rem+2rem)] for more separation
       )}>
         {isMobile && (
           <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50" onClick={() => setSidebarOpen(true)}>

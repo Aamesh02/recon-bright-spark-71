@@ -172,3 +172,13 @@
   z-index: 10;
   pointer-events: none;
 }
+
+/* Logo glow effect for the RECON logo */
+.logo-glow {
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+  transition: all 0.3s ease;
+}
+
+.logo-glow:hover {
+  filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.8));
+}

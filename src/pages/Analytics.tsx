@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Layout from '@/components/Layout';
 import { 
@@ -28,6 +29,12 @@ import {
   ChartTooltipContent 
 } from '@/components/ui/chart';
 
+// Single blue shade for all charts
+const BLUE_COLOR = '#38BDF8';
+const LIGHTER_BLUE_COLOR = '#60C8F9';
+const DARKER_BLUE_COLOR = '#0EA5E9';
+const BLUE_SHADES = [BLUE_COLOR, LIGHTER_BLUE_COLOR, DARKER_BLUE_COLOR, '#90D8FA', '#0096E6'];
+
 const reconciliationData = [
   { name: 'Jan', completed: 45, exceptions: 15 },
   { name: 'Feb', completed: 50, exceptions: 12 },
@@ -45,8 +52,6 @@ const exceptionTypeData = [
   { name: 'Other', value: 15 },
 ];
 
-const COLORS = ['#38BDF8', '#10B981', '#F97316', '#C084FC', '#6366F1'];
-
 const workspaceActivityData = [
   { name: 'Samsung', activity: 78 },
   { name: 'Godrej', activity: 45 },
@@ -56,9 +61,9 @@ const workspaceActivityData = [
 ];
 
 const chartConfig = {
-  completed: { label: 'Completed', color: '#10B981' },
-  exceptions: { label: 'Exceptions', color: '#C084FC' },
-  activity: { label: 'Activity', color: '#38BDF8' },
+  completed: { label: 'Completed', color: BLUE_COLOR },
+  exceptions: { label: 'Exceptions', color: LIGHTER_BLUE_COLOR },
+  activity: { label: 'Activity', color: DARKER_BLUE_COLOR },
 };
 
 const Analytics = () => {
@@ -133,19 +138,22 @@ const Analytics = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
                         <XAxis dataKey="name" stroke="rgba(255,255,255,0.7)" />
                         <YAxis stroke="rgba(255,255,255,0.7)" />
-                        <Tooltip content={<ChartTooltipContent />} />
+                        <Tooltip 
+                          content={<ChartTooltipContent />}
+                          cursor={{fill: 'rgba(255,255,255,0.05)'}}
+                        />
                         <Legend wrapperStyle={{paddingTop: 10}} />
                         <Bar 
                           dataKey="completed" 
                           name="Completed" 
-                          fill="#10B981" 
+                          fill={BLUE_COLOR}
                           radius={[4, 4, 0, 0]} 
                           barSize={30} 
                         />
                         <Bar 
                           dataKey="exceptions" 
                           name="Exceptions" 
-                          fill="#C084FC" 
+                          fill={LIGHTER_BLUE_COLOR}
                           radius={[4, 4, 0, 0]} 
                           barSize={30} 
                         />
@@ -178,12 +186,12 @@ const Analytics = () => {
                           outerRadius={80}
                           stroke="#111111"
                           strokeWidth={1}
-                          fill="#8884d8"
+                          fill={BLUE_COLOR}
                           dataKey="value"
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                         >
                           {exceptionTypeData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell key={`cell-${index}`} fill={BLUE_SHADES[index % BLUE_SHADES.length]} />
                           ))}
                         </Pie>
                         <Tooltip />
@@ -218,12 +226,15 @@ const Analytics = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
                         <XAxis type="number" stroke="rgba(255,255,255,0.7)" />
                         <YAxis dataKey="name" type="category" stroke="rgba(255,255,255,0.7)" />
-                        <Tooltip />
+                        <Tooltip 
+                          cursor={{fill: 'rgba(255,255,255,0.05)'}} 
+                          content={<ChartTooltipContent />}
+                        />
                         <Legend />
                         <Bar 
                           dataKey="hours" 
                           name="Hours" 
-                          fill="#38BDF8" 
+                          fill={BLUE_COLOR}
                           radius={[0, 4, 4, 0]}
                           barSize={20}
                         />
@@ -253,16 +264,19 @@ const Analytics = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
                       <XAxis dataKey="name" stroke="rgba(255,255,255,0.7)" />
                       <YAxis stroke="rgba(255,255,255,0.7)" />
-                      <Tooltip content={<ChartTooltipContent />} />
+                      <Tooltip 
+                        content={<ChartTooltipContent />} 
+                        position={{y: -50}}
+                      />
                       <Legend />
                       <Line
                         type="monotone"
                         dataKey="activity"
                         name="Activity"
-                        stroke="#38BDF8"
+                        stroke={BLUE_COLOR}
                         strokeWidth={3}
                         dot={{ r: 6, strokeWidth: 2, fill: "#0f172a" }}
-                        activeDot={{ r: 8, stroke: "#38BDF8", strokeWidth: 2 }}
+                        activeDot={{ r: 8, stroke: BLUE_COLOR, strokeWidth: 2 }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -278,10 +292,14 @@ const Analytics = () => {
                     <CardDescription>Brand EMI program</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-cyan-blue">{workspace.activity}</div>
+                    <div className="text-2xl font-bold" style={{color: BLUE_COLOR}}>{workspace.activity}</div>
                     <p className="text-sm text-muted-foreground mt-2">{Math.round(workspace.activity * 0.4)} exceptions</p>
                     <div className="mt-2 progress-bar">
-                      <div className="progress-value bg-cyan-blue" style={{width: `${(workspace.activity/100) * 100}%`}}></div>
+                      <div className="progress-value" 
+                        style={{
+                          width: `${(workspace.activity/100) * 100}%`,
+                          backgroundColor: BLUE_COLOR
+                        }}></div>
                     </div>
                   </CardContent>
                 </Card>

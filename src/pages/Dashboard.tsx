@@ -8,16 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, AlertCircle, CheckCircle2, BarChart, Factory, Percent, Upload } from 'lucide-react';
+import { PlusCircle, AlertCircle, CheckCircle2, BarChart, Factory, Percent } from 'lucide-react';
 import { WorkspaceCard } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
 import FileUpload from '@/components/FileUpload';
-
-// Extended type for active workspaces
-interface ActiveWorkspace extends WorkspaceCard {
-  id: string;
-  active: boolean;
-}
 
 // Simulate file processing and column detection
 const processFile = (file: File) => {
@@ -104,6 +98,7 @@ const Dashboard = () => {
   const [isAutoMatching, setIsAutoMatching] = useState(false);
   const [matchedFields, setMatchedFields] = useState<{field1: string, field2: string}[]>([]);
   const [brandLogo, setBrandLogo] = useState<string>('/placeholder.svg');
+  const [modalPage, setModalPage] = useState<'initial' | 'mapping'>('initial');
   
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -126,6 +121,7 @@ const Dashboard = () => {
         .map(header => ({ field1: header, field2: header }));
       
       setMatchedFields(suggestedMatches);
+      setModalPage('mapping');
     }
   }, [file1, file2]);
 
@@ -189,14 +185,12 @@ const Dashboard = () => {
       setFile2(null);
       setMatchedFields([]);
       setBrandLogo('/placeholder.svg');
+      setModalPage('initial');
       
       toast({
         title: "Workspace created",
         description: `Successfully created "${newWorkspaceName}" workspace`,
       });
-      
-      // In a real app, navigate to the new workspace
-      // navigate(`/workspace/${newWorkspace.id}`);
     }, 2500);
   };
 
@@ -268,9 +262,22 @@ const Dashboard = () => {
     }
   }, [newWorkspaceName]);
 
+  const resetNewWorkspaceState = () => {
+    setNewWorkspaceName('');
+    setFile1(null);
+    setFile2(null);
+    setMatchedFields([]);
+    setModalPage('initial');
+  };
+
+  const handleCloseModal = () => {
+    setIsCreatingWorkspace(false);
+    resetNewWorkspaceState();
+  };
+
   return (
     <Layout>
-      {/* Header section with only one search bar and create button */}
+      {/* Header section with search bar and create button */}
       <div className="mb-4">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <p className="text-gray-400 mt-1">Manage and monitor your reconciliation workspaces</p>
@@ -278,7 +285,10 @@ const Dashboard = () => {
       
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <SearchBar />
-        <Dialog open={isCreatingWorkspace} onOpenChange={setIsCreatingWorkspace}>
+        <Dialog open={isCreatingWorkspace} onOpenChange={(open) => {
+          setIsCreatingWorkspace(open);
+          if (!open) resetNewWorkspaceState();
+        }}>
           <DialogTrigger asChild>
             <Button className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white flex items-center gap-2">
               <PlusCircle className="w-4 h-4" />
@@ -286,131 +296,150 @@ const Dashboard = () => {
             </Button>
           </DialogTrigger>
           
-          <DialogContent
-            className="w-full max-w-[700px] rounded-xl glass-card border border-white/20 p-6 mx-auto"
-            style={{
-              boxShadow: "0 8px 32px 0 rgba(80,40,192,0.26), 0 1.5px 7.5px 0 #7e69ab22",
-              background: "rgba(23, 22, 39, 0.96)",
-              overflowY: "auto",
-              maxHeight: "90vh"
-            }}
-          >
-            <DialogHeader className="mb-4">
-              <DialogTitle className="text-xl">Create new reconciliation workspace</DialogTitle>
-              <DialogDescription>
-                Upload sample files to automatically configure the workspace
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-5 py-3">
-              <div className="space-y-2">
-                <Label htmlFor="workspace-name">Workspace Name</Label>
-                <Input
-                  id="workspace-name"
-                  value={newWorkspaceName}
-                  onChange={(e) => setNewWorkspaceName(e.target.value)}
-                  placeholder="e.g., Samsung Brand EMI Reconciliation"
-                  className="bg-black/30 border-white/20"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Source 1 File</Label>
-                  <FileUpload
-                    label="Source 1"
-                    onFileChange={(file) => setFile1(file)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Source 2 File</Label>
-                  <FileUpload
-                    label="Source 2"
-                    onFileChange={(file) => setFile2(file)}
-                  />
-                </div>
-              </div>
-              
-              {/* Show detected columns when both files are uploaded */}
-              {file1 && file2 && columnsDetected.file1.length > 0 && (
-                <div className="space-y-4 mt-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-sm font-medium">Detected Columns</h3>
-                    <Button 
-                      size="sm" 
-                      onClick={handleAutoMatch} 
-                      disabled={isAutoMatching}
-                      className="text-xs h-8"
-                    >
-                      {isAutoMatching ? "Processing..." : "AutoMatch"}
-                    </Button>
+          <DialogContent className="workspace-modal bg-[#1F1D2E] border-0 p-6 max-w-md">
+            {modalPage === 'initial' ? (
+              <>
+                <DialogHeader className="mb-6">
+                  <DialogTitle className="text-xl">Create new reconciliation workspace</DialogTitle>
+                  <DialogDescription>
+                    Upload sample files to automatically configure the workspace
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="workspace-name">Workspace Name</Label>
+                    <Input
+                      id="workspace-name"
+                      value={newWorkspaceName}
+                      onChange={(e) => setNewWorkspaceName(e.target.value)}
+                      placeholder="e.g., Samsung Brand EMI"
+                      className="bg-black/30 border-white/20"
+                    />
                   </div>
-                  
-                  <div className="bg-gray-800/40 rounded-lg p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                      <div>
-                        <h4 className="text-xs text-gray-400 uppercase mb-2">Source 1</h4>
-                        <div className="space-y-1 max-h-40 overflow-y-auto">
-                          {columnsDetected.file1.map((column, i) => (
-                            <div 
-                              key={`file1-${i}`} 
-                              className="text-sm bg-gray-700/30 px-2 py-1 rounded"
-                            >
-                              {column}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="text-xs text-gray-400 uppercase mb-2">Source 2</h4>
-                        <div className="space-y-1 max-h-40 overflow-y-auto">
-                          {columnsDetected.file2.map((column, i) => (
-                            <div 
-                              key={`file2-${i}`} 
-                              className="text-sm bg-gray-700/30 px-2 py-1 rounded"
-                            >
-                              {column}
-                            </div>
-                          ))}
-                        </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="block mb-2">Source 1 File</Label>
+                      <FileUpload
+                        label="Source 1"
+                        onFileChange={(file) => setFile1(file)}
+                      />
+                    </div>
+                    <div>
+                      <Label className="block mb-2">Source 2 File</Label>  
+                      <FileUpload
+                        label="Source 2"
+                        onFileChange={(file) => setFile2(file)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end gap-4 mt-6">
+                  <Button variant="outline" onClick={handleCloseModal}
+                    className="hover:bg-white/10 border-white/20">
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      if (file1 && file2 && newWorkspaceName) {
+                        setModalPage('mapping');
+                      } else {
+                        toast({
+                          title: "Missing information",
+                          description: "Please provide a workspace name and upload both files",
+                          variant: "destructive",
+                        });
+                      }
+                    }}
+                    disabled={!newWorkspaceName || !file1 || !file2}
+                    className="bg-[#7C3AED] hover:bg-[#6D28D9]"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <DialogHeader className="mb-4">
+                  <DialogTitle className="text-xl">Detected Columns</DialogTitle>
+                  <DialogDescription>
+                    Review and confirm field mappings between your data sources
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="detected-columns">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <h3 className="text-xs uppercase text-white/70 mb-2">Source 1</h3>
+                      <div className="column-list max-h-[120px] overflow-y-auto">
+                        {columnsDetected.file1.map((column, idx) => (
+                          <div key={`src1-${idx}`} className="column-item">
+                            {column}
+                          </div>
+                        ))}
                       </div>
                     </div>
+                    <div>
+                      <h3 className="text-xs uppercase text-white/70 mb-2">Source 2</h3>
+                      <div className="column-list max-h-[120px] overflow-y-auto">
+                        {columnsDetected.file2.map((column, idx) => (
+                          <div key={`src2-${idx}`} className="column-item">
+                            {column}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mapped fields section */}
+                <div className="my-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-sm font-medium">Mapped Fields</h3>
+                    <Button 
+                      size="sm" 
+                      onClick={handleAutoMatch}
+                      disabled={isAutoMatching}
+                      className="text-xs h-8 bg-[#7C3AED] hover:bg-[#6D28D9]"
+                    >
+                      Auto-Match
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2 max-h-[180px] overflow-y-auto">
+                    {matchedFields.map((match, idx) => (
+                      <div key={`match-${idx}`} className="field-mapping">
+                        <div className="text-sm">{match.field1}</div>
+                        <div className="arrow">↔</div>
+                        <div className="text-sm">{match.field2}</div>
+                      </div>
+                    ))}
                     
-                    {/* Matched Fields Section */}
-                    {matchedFields.length > 0 && (
-                      <div className="mt-4 border-t border-gray-700 pt-4">
-                        <h4 className="text-xs text-gray-400 uppercase mb-2">Mapped Fields</h4>
-                        <div className="space-y-2 max-h-60 overflow-y-auto">
-                          {matchedFields.map((match, i) => (
-                            <div 
-                              key={`match-${i}`} 
-                              className="flex items-center justify-between bg-indigo-900/30 px-3 py-2 rounded-lg"
-                            >
-                              <span className="text-sm">{match.field1}</span>
-                              <span className="text-gray-400">↔</span>
-                              <span className="text-sm">{match.field2}</span>
-                            </div>
-                          ))}
-                        </div>
+                    {matchedFields.length === 0 && (
+                      <div className="text-center py-4 text-white/50 text-sm">
+                        No fields mapped yet. Click "Auto-Match" to automatically map similar fields.
                       </div>
                     )}
                   </div>
                 </div>
-              )}
-            </div>
-            <div className="flex justify-end gap-4 mt-4">
-              <Button variant="outline" onClick={() => setIsCreatingWorkspace(false)}
-                className="hover:bg-white/10 border-white/20">
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleCreateWorkspace} 
-                className="gradient-btn"
-                disabled={isProcessingFiles || !file1 || !file2 || !newWorkspaceName}
-              >
-                {isProcessingFiles ? "Processing..." : "Create Workspace"}
-              </Button>
-            </div>
+
+                <div className="flex justify-end gap-4 mt-4">
+                  <Button variant="outline" onClick={() => setModalPage('initial')}
+                    className="hover:bg-white/10 border-white/20">
+                    Back
+                  </Button>
+                  <Button 
+                    onClick={handleCreateWorkspace} 
+                    disabled={isProcessingFiles || matchedFields.length === 0}
+                    className="bg-[#7C3AED] hover:bg-[#6D28D9]"
+                  >
+                    {isProcessingFiles ? "Creating..." : "Create Workspace"}
+                  </Button>
+                </div>
+              </>
+            )}
           </DialogContent>
         </Dialog>
       </div>
@@ -438,6 +467,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Workspace Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {workspaces.map((workspace) => (
           <Card

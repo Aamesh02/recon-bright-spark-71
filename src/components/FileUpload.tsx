@@ -43,40 +43,37 @@ const FileUpload = ({ label, onFileChange, accept = ".xlsx,.xls,.csv" }: FileUpl
   };
 
   return (
-    <div className="space-y-2">
-      <div className="font-medium">{label}</div>
-      <div
-        className={`border-2 border-dashed rounded-md p-4 transition-colors backdrop-blur-sm ${
-          isDraggingOver ? 'border-primary bg-primary/10' : 'border-white/20'
-        } ${file ? 'border-success bg-success/10' : ''}`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        {file ? (
-          <div className="flex items-center justify-center py-4">
-            <CheckCircle2 className="h-6 w-6 text-success mr-2" />
-            <span className="font-medium truncate max-w-[250px]">{file.name}</span>
-          </div>
-        ) : (
-          <>
-            <input
-              type="file"
-              id={inputId}
-              className="hidden"
-              accept={accept}
-              onChange={handleFileChange}
-            />
-            <label htmlFor={inputId} className="cursor-pointer block">
-              <div className="flex flex-col items-center py-4">
-                <PlusCircle className="h-8 w-8 text-gray-400 mb-2" />
-                <p className="text-sm font-medium">Click to upload or drag & drop</p>
-                <p className="text-xs text-gray-500">Excel or CSV file</p>
-              </div>
-            </label>
-          </>
-        )}
-      </div>
+    <div
+      className={`border border-dashed rounded-md transition-colors ${
+        isDraggingOver ? 'border-[#7C3AED] bg-[#7C3AED]/10' : 'border-white/20'
+      } ${file ? 'border-[#10B981] bg-[#10B981]/10' : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {file ? (
+        <div className="flex items-center justify-center py-4">
+          <CheckCircle2 className="h-6 w-6 text-[#10B981] mr-2" />
+          <span className="font-medium truncate max-w-[150px]">{file.name}</span>
+        </div>
+      ) : (
+        <>
+          <input
+            type="file"
+            id={inputId}
+            className="hidden"
+            accept={accept}
+            onChange={handleFileChange}
+          />
+          <label htmlFor={inputId} className="cursor-pointer block">
+            <div className="flex flex-col items-center py-4">
+              <PlusCircle className="h-8 w-8 text-gray-400 mb-2" />
+              <p className="text-sm font-medium">Click to upload or drag & drop</p>
+              <p className="text-xs text-gray-500 mt-1">Excel or CSV file</p>
+            </div>
+          </label>
+        </>
+      )}
     </div>
   );
 };

@@ -1,15 +1,16 @@
 
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { CheckCircle2, PlusCircle } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 interface FileUploadProps {
   label: string;
   onFileChange: (file: File | null) => void;
   accept?: string;
+  source?: string;
 }
 
-const FileUpload = ({ label, onFileChange, accept = ".xlsx,.xls,.csv" }: FileUploadProps) => {
+const FileUpload = ({ label, onFileChange, accept = ".xlsx,.xls,.csv", source }: FileUploadProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const inputId = `file-upload-${label.replace(/\s+/g, '-').toLowerCase()}`;
@@ -44,7 +45,7 @@ const FileUpload = ({ label, onFileChange, accept = ".xlsx,.xls,.csv" }: FileUpl
 
   return (
     <div
-      className={`border border-dashed rounded-md transition-colors ${
+      className={`border border-dashed rounded-md transition-all h-[112px] ${
         isDraggingOver ? 'border-[#7C3AED] bg-[#7C3AED]/10' : 'border-white/20'
       } ${file ? 'border-[#10B981] bg-[#10B981]/10' : ''}`}
       onDragOver={handleDragOver}
@@ -52,9 +53,11 @@ const FileUpload = ({ label, onFileChange, accept = ".xlsx,.xls,.csv" }: FileUpl
       onDrop={handleDrop}
     >
       {file ? (
-        <div className="flex items-center justify-center py-4">
-          <CheckCircle2 className="h-6 w-6 text-[#10B981] mr-2" />
-          <span className="font-medium truncate max-w-[150px]">{file.name}</span>
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="font-medium truncate max-w-[180px]">{file.name}</div>
+            <div className="text-xs text-gray-400 mt-1">Click to change</div>
+          </div>
         </div>
       ) : (
         <>
@@ -65,11 +68,14 @@ const FileUpload = ({ label, onFileChange, accept = ".xlsx,.xls,.csv" }: FileUpl
             accept={accept}
             onChange={handleFileChange}
           />
-          <label htmlFor={inputId} className="cursor-pointer block">
-            <div className="flex flex-col items-center py-4">
-              <PlusCircle className="h-8 w-8 text-gray-400 mb-2" />
+          <label htmlFor={inputId} className="cursor-pointer block h-full">
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="bg-white/5 rounded-full w-10 h-10 flex items-center justify-center mb-2">
+                <Plus className="h-5 w-5 text-gray-300" />
+              </div>
               <p className="text-sm font-medium">Click to upload or drag & drop</p>
               <p className="text-xs text-gray-500 mt-1">Excel or CSV file</p>
+              {source && <p className="text-xs font-medium mt-1 text-blue-400">{source}</p>}
             </div>
           </label>
         </>

@@ -68,5 +68,30 @@
 /* Glass card styling */
 .glass-card {
   backdrop-filter: blur(16px);
-  background: rgba(30, 30, 50, 0.7);
+  background: rgba(20, 20, 35, 0.8);
+}
+
+/* Modal fixes */
+.DialogOverlay {
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.DialogContent {
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes overlayShow {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }

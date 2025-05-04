@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -269,7 +270,12 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      {/* Header section with search bar and create button */}
+      {/* Header section with only one search bar and create button */}
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-gray-400 mt-1">Manage and monitor your reconciliation workspaces</p>
+      </div>
+      
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <SearchBar />
         <Dialog open={isCreatingWorkspace} onOpenChange={setIsCreatingWorkspace}>
@@ -410,7 +416,7 @@ const Dashboard = () => {
       </div>
 
       {/* KPI Tiles */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
         <div className="kpi-tile">
           <BarChart className="h-6 w-6 text-warning mb-2" />
           <div className="kpi-tile-value text-warning">{totalGMV}</div>

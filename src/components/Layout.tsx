@@ -48,19 +48,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex">
+      {/* Sidebar - updated to be darker */}
       <div className={cn(
-        "w-64 bg-[#1a202c] h-screen fixed border-r border-[#2a2938] transition-transform",
+        "w-72 bg-[#10111A] h-screen fixed border-r border-[#1E2030]/30 transition-transform",
         isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0",
         "z-40"
       )}>
         <div className="p-6 flex flex-col h-full">
-          <div className="flex flex-col items-center justify-center mb-12">
+          <div className="flex flex-col items-center justify-center mb-14">
             <Link to="/dashboard" className="flex flex-col items-center">
-              <div className="text-[#33C3F0] mb-2">
+              <div className="mb-3">
                 <img 
                   src="/lovable-uploads/41a0de94-8418-48c8-9405-12d773f82150.png" 
                   alt="RECON Logo" 
-                  className="h-10"
+                  className="h-14"
                 />
               </div>
               <span className="text-sm font-medium text-gray-300">ACME Finance</span>
@@ -72,19 +73,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
           </div>
 
-          <nav className="flex-grow">
-            <ul className="space-y-2">
+          <nav className="flex-grow mt-6">
+            <ul className="space-y-3">
               {navigation.map((item) => (
                 <li key={item.name}>
                   <Link
                     to={item.href}
                     className={cn(
-                      "flex items-center space-x-2 rounded-md p-2 text-sm font-medium hover:bg-gray-800/40 hover:text-white",
+                      "flex items-center space-x-3 rounded-md p-3 text-sm font-medium hover:bg-gray-800/40 hover:text-white",
                       location.pathname === item.href ? "bg-gray-800/40 text-white" : "text-gray-400"
                     )}
                     onClick={() => isMobile && setSidebarOpen(false)}
                   >
-                    <item.icon className="h-4 w-4" />
+                    <item.icon className="h-5 w-5" />
                     <span>{item.name}</span>
                   </Link>
                 </li>
@@ -92,9 +93,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </ul>
           </nav>
 
-          <Separator className="bg-gray-700/50" />
+          <Separator className="bg-gray-700/50 my-6" />
 
-          <div className="mt-auto pt-6">
+          <div className="mt-auto">
             <div className="flex items-center space-x-2">
               <Avatar>
                 <AvatarImage src={user?.avatar} />
@@ -117,21 +118,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setSidebarOpen(false)}></div>
       )}
 
+      {/* Main content area - added margin for spacing between sidebar and content */}
       <div className={cn(
         "flex-1 p-8",
-        isMobile ? "pl-8" : "pl-64"
+        isMobile ? "pl-8" : "pl-80"
       )}>
         {isMobile && (
           <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-6 w-6" />
           </Button>
         )}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{location.pathname.substring(1).charAt(0).toUpperCase() + location.pathname.substring(2)}</h1>
-          <div className="flex items-center space-x-4">
-            <SearchBar />
-          </div>
-        </div>
         {children}
       </div>
     </div>

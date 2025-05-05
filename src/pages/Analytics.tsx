@@ -284,27 +284,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <div className="grid gap-4 mt-20 md:grid-cols-2 lg:grid-cols-4">
-              {workspaceActivityData.map(workspace => (
-                <Card key={workspace.name} className="bg-black/20 border border-white/10 shadow-lg card-hover">
-                  <CardHeader>
-                    <CardTitle>{workspace.name}</CardTitle>
-                    <CardDescription>Brand EMI program</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold" style={{color: BLUE_COLOR}}>{workspace.activity}</div>
-                    <p className="text-sm text-muted-foreground mt-2">{Math.round(workspace.activity * 0.4)} exceptions</p>
-                    <div className="mt-2 progress-bar">
-                      <div className="progress-value" 
-                        style={{
-                          width: `${(workspace.activity/100) * 100}%`,
-                          backgroundColor: BLUE_COLOR
-                        }}></div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            {/* Company cards have been removed as requested */}
           </TabsContent>
         </Tabs>
       </div>

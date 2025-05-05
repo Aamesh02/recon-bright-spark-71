@@ -313,3 +313,9 @@
 .step.active {
   background: #7C3AED;
 }
+
+/* Remove glass-card references that were using the gradient */
+.glass-card {
+  @apply backdrop-blur-sm bg-black/20 border border-white/10 shadow-lg;
+}
+

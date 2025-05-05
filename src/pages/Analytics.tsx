@@ -86,7 +86,7 @@ const Analytics = () => {
 
           <TabsContent value="overview">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="bg-black/20 border border-white/10 shadow-lg card-hover">
+              <Card className="bg-muted border border-white/10 shadow-lg card-hover">
                 <CardHeader>
                   <CardTitle>Total Reconciliations</CardTitle>
                   <CardDescription>Last 30 days</CardDescription>
@@ -97,7 +97,7 @@ const Analytics = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-black/20 border border-white/10 shadow-lg card-hover">
+              <Card className="bg-muted border border-white/10 shadow-lg card-hover">
                 <CardHeader>
                   <CardTitle>Exceptions Rate</CardTitle>
                   <CardDescription>Last 30 days</CardDescription>
@@ -108,7 +108,7 @@ const Analytics = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-black/20 border border-white/10 shadow-lg card-hover">
+              <Card className="bg-muted border border-white/10 shadow-lg card-hover">
                 <CardHeader>
                   <CardTitle>Average Resolution Time</CardTitle>
                   <CardDescription>Last 30 days</CardDescription>
@@ -167,7 +167,7 @@ const Analytics = () => {
 
           <TabsContent value="exceptions">
             <div className="grid gap-4 md:grid-cols-2">
-              <Card className="bg-black/20 border border-white/10 shadow-lg">
+              <Card className="bg-muted border border-white/10 shadow-lg">
                 <CardHeader>
                   <CardTitle>Exception Types</CardTitle>
                   <CardDescription>
@@ -202,7 +202,7 @@ const Analytics = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-black/20 border border-white/10 shadow-lg">
+              <Card className="bg-muted border border-white/10 shadow-lg">
                 <CardHeader>
                   <CardTitle>Exception Resolution Time</CardTitle>
                   <CardDescription>
